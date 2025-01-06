@@ -1,11 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace SocialMedia.Models
 {
-    public class BaseEntity 
+    public class BaseEntity : IdentityUser
     {
         public Guid Id { get; set; }
-        public TimestampAttribute Timestamp { get; set; }
+        public DateTime Timestamp { get; set; }
+
 
     }
 }

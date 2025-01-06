@@ -4,7 +4,8 @@ namespace SocialMedia.Models
 {
     public class Comment : BaseEntity
     {
+        //id from base
         public string Content { get; set; }
-        public TimestampAttribute Timestamp { get; set; }
+        //time from base
     }
 }

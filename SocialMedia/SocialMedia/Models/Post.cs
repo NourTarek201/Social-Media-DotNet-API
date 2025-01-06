@@ -2,9 +2,11 @@
 {
     public class Post : BaseEntity
     {
+        //id from base
         public string MediaLink { get; set; }
         public string Visibility { get; set; } = "public";
-        public List<User> Likers { get; set; }
-        public List<Comment> Comments { get; set; }
+        // time from base
+     //   public List<User> Likers { get; set; }
+     //   public List<Comment> Comments { get; set; }
     }
 }
