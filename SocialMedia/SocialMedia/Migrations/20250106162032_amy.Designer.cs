@@ -12,8 +12,8 @@ using SocialMedia.Models;
 namespace SocialMedia.Migrations
 {
     [DbContext(typeof(SoocialDbContext))]
-    [Migration("20250106160453_add")]
-    partial class add
+    [Migration("20250106162032_amy")]
+    partial class amy
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
