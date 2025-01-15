@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SocialMedia.Migrations
 {
     /// <inheritdoc />
-    public partial class amy : Migration
+    public partial class tot : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -98,11 +98,14 @@ namespace SocialMedia.Migrations
                     Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Discriminator = table.Column<string>(type: "nvarchar(13)", maxLength: 13, nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PostId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Message_Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SenderId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     chatroomId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     MediaLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Visibility = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Post_UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -122,9 +125,25 @@ namespace SocialMedia.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_AspNetUsers_AspNetUsers_PostId",
+                        column: x => x.PostId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_AspNetUsers_Chatrooms_chatroomId",
                         column: x => x.chatroomId,
                         principalTable: "Chatrooms",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_Users_Post_UserId",
+                        column: x => x.Post_UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
                         principalColumn: "Id");
                 });
 
@@ -213,6 +232,30 @@ namespace SocialMedia.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "PostLikers",
+                columns: table => new
+                {
+                    LikedPostsId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LikersId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PostLikers", x => new { x.LikedPostsId, x.LikersId });
+                    table.ForeignKey(
+                        name: "FK_PostLikers_AspNetUsers_LikedPostsId",
+                        column: x => x.LikedPostsId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PostLikers_Users_LikersId",
+                        column: x => x.LikersId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -251,6 +294,21 @@ namespace SocialMedia.Migrations
                 column: "chatroomId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_Post_UserId",
+                table: "AspNetUsers",
+                column: "Post_UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_PostId",
+                table: "AspNetUsers",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_UserId",
+                table: "AspNetUsers",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
@@ -261,6 +319,11 @@ namespace SocialMedia.Migrations
                 name: "IX_Chatrooms_UserId",
                 table: "Chatrooms",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PostLikers_LikersId",
+                table: "PostLikers",
+                column: "LikersId");
         }
 
         /// <inheritdoc />
@@ -280,6 +343,9 @@ namespace SocialMedia.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "PostLikers");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

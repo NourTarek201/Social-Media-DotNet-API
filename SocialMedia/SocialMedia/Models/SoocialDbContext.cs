@@ -23,6 +23,22 @@ namespace SocialMedia.Models
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<Message> Messages { get; set; }
         public virtual DbSet<Post> Posts { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Post>()
+                .HasMany(p => p.Likers)
+                .WithMany(u => u.LikedPosts)
+                .UsingEntity(j => j.ToTable("PostLikers"));
+
+            modelBuilder.Entity<Post>()
+                .HasOne(p => p.User) 
+                .WithMany(u => u.CreatedPosts) 
+                .HasForeignKey(p => p.UserId); 
+        }
+
+
 
 
 

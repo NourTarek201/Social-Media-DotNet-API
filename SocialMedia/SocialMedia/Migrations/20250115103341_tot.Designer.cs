@@ -12,8 +12,8 @@ using SocialMedia.Models;
 namespace SocialMedia.Migrations
 {
     [DbContext(typeof(SoocialDbContext))]
-    [Migration("20250106162032_amy")]
-    partial class amy
+    [Migration("20250115103341_tot")]
+    partial class tot
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -156,6 +156,21 @@ namespace SocialMedia.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("PostUser", b =>
+                {
+                    b.Property<string>("LikedPostsId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("LikersId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("LikedPostsId", "LikersId");
+
+                    b.HasIndex("LikersId");
+
+                    b.ToTable("PostLikers", (string)null);
                 });
 
             modelBuilder.Entity("SocialMedia.Models.BaseEntity", b =>
@@ -319,6 +334,16 @@ namespace SocialMedia.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PostId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
                     b.HasDiscriminator().HasValue("Comment");
                 });
 
@@ -355,9 +380,21 @@ namespace SocialMedia.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Visibility")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUsers", t =>
+                        {
+                            t.Property("UserId")
+                                .HasColumnName("Post_UserId");
+                        });
 
                     b.HasDiscriminator().HasValue("Post");
                 });
@@ -413,10 +450,36 @@ namespace SocialMedia.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("PostUser", b =>
+                {
+                    b.HasOne("SocialMedia.Models.Post", null)
+                        .WithMany()
+                        .HasForeignKey("LikedPostsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SocialMedia.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("LikersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("SocialMedia.Models.chatroom", b =>
                 {
                     b.HasOne("SocialMedia.Models.User", null)
                         .WithMany("Chatrooms")
+                        .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("SocialMedia.Models.Comment", b =>
+                {
+                    b.HasOne("SocialMedia.Models.Post", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("PostId");
+
+                    b.HasOne("SocialMedia.Models.User", null)
+                        .WithMany("CreatedComments")
                         .HasForeignKey("UserId");
                 });
 
@@ -427,14 +490,34 @@ namespace SocialMedia.Migrations
                         .HasForeignKey("chatroomId");
                 });
 
+            modelBuilder.Entity("SocialMedia.Models.Post", b =>
+                {
+                    b.HasOne("SocialMedia.Models.User", "User")
+                        .WithMany("CreatedPosts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("SocialMedia.Models.User", b =>
                 {
                     b.Navigation("Chatrooms");
+
+                    b.Navigation("CreatedComments");
+
+                    b.Navigation("CreatedPosts");
                 });
 
             modelBuilder.Entity("SocialMedia.Models.chatroom", b =>
                 {
                     b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("SocialMedia.Models.Post", b =>
+                {
+                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }
