@@ -3,11 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SocialMedia.Models
 {
-    public class BaseEntity : IdentityUser
+    public class BaseIdentityUser : IdentityUser<Guid>
     {
-        public Guid Id { get; set; }
-        public DateTime Timestamp { get; set; }
-
-
+        // Add any common properties for all identity users here
+        //public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

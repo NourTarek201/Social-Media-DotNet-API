@@ -1,10 +1,16 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace SocialMedia.Models
 {
-    public class SoocialDbContext : IdentityDbContext<BaseEntity>
+    public class SoocialDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     {
+        public SoocialDbContext(DbContextOptions<SoocialDbContext> options)
+            : base(options)
+        {
+        }
+
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{
 
@@ -14,10 +20,7 @@ namespace SocialMedia.Models
         //public virtual DbSet<Post> Posts { get; set; }
         //public virtual DbSet<Message> Messages { get; set; }
         //public virtual DbSet<Followers> Followers { get; set; }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer("Server=.;Database=sochialtest;User Id=Admin;Password=Admin_123;Integrated Security=True;Encrypt=False");
-        }
+      
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<chatroom> Chatrooms { get; set; }
         public virtual DbSet<Comment> Comments { get; set; }
@@ -33,12 +36,10 @@ namespace SocialMedia.Models
                 .UsingEntity(j => j.ToTable("PostLikers"));
 
             modelBuilder.Entity<Post>()
-                .HasOne(p => p.User) 
-                .WithMany(u => u.CreatedPosts) 
-                .HasForeignKey(p => p.UserId); 
+                .HasOne(p => p.User)
+                .WithMany(u => u.CreatedPosts)
+                .HasForeignKey(p => p.UserId);
         }
-
-
 
 
 

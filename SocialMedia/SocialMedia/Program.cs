@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using SocialMedia.Models;
 
 namespace SocialMedia
 {
@@ -8,25 +11,34 @@ namespace SocialMedia
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddDbContext<SoocialDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("local")));
 
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            builder.Services.AddIdentity<User, IdentityRole<Guid>>()
+                .AddEntityFrameworkStores<SoocialDbContext>()
+                .AddDefaultTokenProviders();
+
+            builder.Services.AddControllersWithViews();
+
+            // Add Swagger services
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // Enable Swagger middleware
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(options =>
+                {
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Social Media API v1");
+                    options.RoutePrefix = "swagger"; // Serve Swagger UI at the root URL
+                });
             }
 
-            app.UseHttpsRedirection();
-
+            app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.MapControllers();
 
