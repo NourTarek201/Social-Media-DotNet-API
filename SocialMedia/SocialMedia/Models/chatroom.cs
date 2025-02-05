@@ -1,8 +1,9 @@
 ﻿namespace SocialMedia.Models
 {
-    public class chatroom
+    public class Chatroom :BaseEntity
     {
-        public Guid Id { get; set; }
+        public virtual List<User> Users { get; set; }
+
         public virtual List<Message> Messages { get; set; }
     }
 }

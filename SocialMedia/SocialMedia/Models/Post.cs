@@ -1,18 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using SocialMedia.Models.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SocialMedia.Models
 {
-    public class Post
+    public class Post : BaseEntity
     {
-        //id from base
-        public Guid Id { get; set; }
         public string MediaLink { get; set; }
-        public string Visibility { get; set; } = "public";
+        public Visibility PostPrivacy{ get; set; } = Visibility.Followers;
         public Guid UserId { get; set; }
         public virtual User User { get; set; }
-
-        // List of users who liked this post
-        public List<User> Likers { get; set; }
+        public List<UserReaction> Reacters { get; set; }
         public List<Comment> Comments { get; set; }
     }
 }

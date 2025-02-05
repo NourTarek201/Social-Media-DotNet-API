@@ -11,11 +11,11 @@ namespace SocialMedia
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddDbContext<SoocialDbContext>(options =>
+            builder.Services.AddDbContext<SocialDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("local")));
 
             builder.Services.AddIdentity<User, IdentityRole<Guid>>()
-                .AddEntityFrameworkStores<SoocialDbContext>()
+                .AddEntityFrameworkStores<SocialDbContext>()
                 .AddDefaultTokenProviders();
 
             builder.Services.AddControllersWithViews();

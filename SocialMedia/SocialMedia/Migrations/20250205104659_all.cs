@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SocialMedia.Migrations
 {
     /// <inheritdoc />
-    public partial class wihtidentety : Migration
+    public partial class all : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,8 +30,6 @@ namespace SocialMedia.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -45,11 +43,42 @@ namespace SocialMedia.Migrations
                     TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Chatrooms",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Chatrooms", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Reactions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Icon = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reactions", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -159,20 +188,31 @@ namespace SocialMedia.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Chatrooms",
+                name: "Followers",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FollowerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Chatrooms", x => x.Id);
+                    table.PrimaryKey("PK_Followers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Chatrooms_AspNetUsers_UserId",
+                        name: "FK_Followers_AspNetUsers_FollowerId",
+                        column: x => x.FollowerId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Followers_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -181,8 +221,10 @@ namespace SocialMedia.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     MediaLink = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Visibility = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    PostPrivacy = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -196,20 +238,46 @@ namespace SocialMedia.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ChatroomUser",
+                columns: table => new
+                {
+                    ChatroomsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UsersId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChatroomUser", x => new { x.ChatroomsId, x.UsersId });
+                    table.ForeignKey(
+                        name: "FK_ChatroomUser_AspNetUsers_UsersId",
+                        column: x => x.UsersId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ChatroomUser_Chatrooms_ChatroomsId",
+                        column: x => x.ChatroomsId,
+                        principalTable: "Chatrooms",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Messages",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SenderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    chatroomId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    ChatroomId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Messages", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Messages_Chatrooms_chatroomId",
-                        column: x => x.chatroomId,
+                        name: "FK_Messages_Chatrooms_ChatroomId",
+                        column: x => x.ChatroomId,
                         principalTable: "Chatrooms",
                         principalColumn: "Id");
                 });
@@ -220,9 +288,10 @@ namespace SocialMedia.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PostId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -240,27 +309,37 @@ namespace SocialMedia.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PostLikers",
+                name: "UserReaction",
                 columns: table => new
                 {
-                    LikedPostsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    LikersId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PostId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ReactionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PostLikers", x => new { x.LikedPostsId, x.LikersId });
+                    table.PrimaryKey("PK_UserReaction", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PostLikers_AspNetUsers_LikersId",
-                        column: x => x.LikersId,
+                        name: "FK_UserReaction_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PostLikers_Posts_LikedPostsId",
-                        column: x => x.LikedPostsId,
+                        name: "FK_UserReaction_Posts_PostId",
+                        column: x => x.PostId,
                         principalTable: "Posts",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UserReaction_Reactions_ReactionId",
+                        column: x => x.ReactionId,
+                        principalTable: "Reactions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -303,9 +382,9 @@ namespace SocialMedia.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Chatrooms_UserId",
-                table: "Chatrooms",
-                column: "UserId");
+                name: "IX_ChatroomUser_UsersId",
+                table: "ChatroomUser",
+                column: "UsersId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_PostId",
@@ -318,18 +397,38 @@ namespace SocialMedia.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Messages_chatroomId",
-                table: "Messages",
-                column: "chatroomId");
+                name: "IX_Followers_FollowerId",
+                table: "Followers",
+                column: "FollowerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PostLikers_LikersId",
-                table: "PostLikers",
-                column: "LikersId");
+                name: "IX_Followers_UserId",
+                table: "Followers",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_ChatroomId",
+                table: "Messages",
+                column: "ChatroomId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_UserId",
                 table: "Posts",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserReaction_PostId",
+                table: "UserReaction",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserReaction_ReactionId",
+                table: "UserReaction",
+                column: "ReactionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserReaction_UserId",
+                table: "UserReaction",
                 column: "UserId");
         }
 
@@ -352,13 +451,19 @@ namespace SocialMedia.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "ChatroomUser");
+
+            migrationBuilder.DropTable(
                 name: "Comments");
+
+            migrationBuilder.DropTable(
+                name: "Followers");
 
             migrationBuilder.DropTable(
                 name: "Messages");
 
             migrationBuilder.DropTable(
-                name: "PostLikers");
+                name: "UserReaction");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -368,6 +473,9 @@ namespace SocialMedia.Migrations
 
             migrationBuilder.DropTable(
                 name: "Posts");
+
+            migrationBuilder.DropTable(
+                name: "Reactions");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

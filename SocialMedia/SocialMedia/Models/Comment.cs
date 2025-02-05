@@ -2,13 +2,8 @@
 
 namespace SocialMedia.Models
 {
-    public class Comment
+    public class Comment : BaseEntity
     {
-        //id from base
-        public Guid Id { get; set; }
         public string Content { get; set; }
-        public DateTime Timestamp { get; set; }
-
-        //time from base
     }
 }

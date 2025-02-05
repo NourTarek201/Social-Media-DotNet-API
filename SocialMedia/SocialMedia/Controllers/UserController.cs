@@ -9,8 +9,8 @@ namespace SocialMedia.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly SoocialDbContext _context;
-        public UserController(SoocialDbContext context)
+        private readonly SocialDbContext _context;
+        public UserController(SocialDbContext context)
         {
             _context = context;
         }

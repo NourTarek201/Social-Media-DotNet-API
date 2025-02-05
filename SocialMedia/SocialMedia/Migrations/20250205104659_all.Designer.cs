@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SocialMedia.Models;
 
@@ -10,10 +11,12 @@ using SocialMedia.Models;
 
 namespace SocialMedia.Migrations
 {
-    [DbContext(typeof(SoocialDbContext))]
-    partial class SoocialDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(SocialDbContext))]
+    [Migration("20250205104659_all")]
+    partial class all
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,21 @@ namespace SocialMedia.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("ChatroomUser", b =>
+                {
+                    b.Property<Guid>("ChatroomsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UsersId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ChatroomsId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("ChatroomUser");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
                 {
@@ -153,19 +171,21 @@ namespace SocialMedia.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("PostUser", b =>
+            modelBuilder.Entity("SocialMedia.Models.Chatroom", b =>
                 {
-                    b.Property<Guid>("LikedPostsId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("LikersId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
-                    b.HasKey("LikedPostsId", "LikersId");
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
-                    b.HasIndex("LikersId");
+                    b.HasKey("Id");
 
-                    b.ToTable("PostLikers", (string)null);
+                    b.ToTable("Chatrooms");
                 });
 
             modelBuilder.Entity("SocialMedia.Models.Comment", b =>
@@ -178,10 +198,13 @@ namespace SocialMedia.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid?>("PostId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("Timestamp")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("UserId")
@@ -202,19 +225,25 @@ namespace SocialMedia.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("ChatroomId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("SenderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("chatroomId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("chatroomId");
+                    b.HasIndex("ChatroomId");
 
                     b.ToTable("Messages");
                 });
@@ -225,22 +254,52 @@ namespace SocialMedia.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("MediaLink")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("PostPrivacy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Visibility")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("SocialMedia.Models.Reaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Reactions");
                 });
 
             modelBuilder.Entity("SocialMedia.Models.User", b =>
@@ -255,6 +314,9 @@ namespace SocialMedia.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -315,20 +377,81 @@ namespace SocialMedia.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("SocialMedia.Models.chatroom", b =>
+            modelBuilder.Entity("SocialMedia.Models.UserFollower", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("UserId")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("FollowerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("FollowerId");
+
                     b.HasIndex("UserId");
 
-                    b.ToTable("Chatrooms");
+                    b.ToTable("Followers");
+                });
+
+            modelBuilder.Entity("SocialMedia.Models.UserReaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ReactionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("ReactionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserReaction");
+                });
+
+            modelBuilder.Entity("ChatroomUser", b =>
+                {
+                    b.HasOne("SocialMedia.Models.Chatroom", null)
+                        .WithMany()
+                        .HasForeignKey("ChatroomsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SocialMedia.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -382,21 +505,6 @@ namespace SocialMedia.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("PostUser", b =>
-                {
-                    b.HasOne("SocialMedia.Models.Post", null)
-                        .WithMany()
-                        .HasForeignKey("LikedPostsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SocialMedia.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("LikersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("SocialMedia.Models.Comment", b =>
                 {
                     b.HasOne("SocialMedia.Models.Post", null)
@@ -404,15 +512,15 @@ namespace SocialMedia.Migrations
                         .HasForeignKey("PostId");
 
                     b.HasOne("SocialMedia.Models.User", null)
-                        .WithMany("CreatedComments")
+                        .WithMany("Comments")
                         .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("SocialMedia.Models.Message", b =>
                 {
-                    b.HasOne("SocialMedia.Models.chatroom", null)
+                    b.HasOne("SocialMedia.Models.Chatroom", null)
                         .WithMany("Messages")
-                        .HasForeignKey("chatroomId");
+                        .HasForeignKey("ChatroomId");
                 });
 
             modelBuilder.Entity("SocialMedia.Models.Post", b =>
@@ -426,30 +534,75 @@ namespace SocialMedia.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("SocialMedia.Models.chatroom", b =>
+            modelBuilder.Entity("SocialMedia.Models.UserFollower", b =>
                 {
-                    b.HasOne("SocialMedia.Models.User", null)
-                        .WithMany("Chatrooms")
-                        .HasForeignKey("UserId");
+                    b.HasOne("SocialMedia.Models.User", "Follower")
+                        .WithMany("Followings")
+                        .HasForeignKey("FollowerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SocialMedia.Models.User", "User")
+                        .WithMany("Followers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Follower");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SocialMedia.Models.UserReaction", b =>
+                {
+                    b.HasOne("SocialMedia.Models.Post", "Post")
+                        .WithMany("Reacters")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SocialMedia.Models.Reaction", "Reaction")
+                        .WithMany()
+                        .HasForeignKey("ReactionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SocialMedia.Models.User", "User")
+                        .WithMany("ReactedPosts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Reaction");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SocialMedia.Models.Chatroom", b =>
+                {
+                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("SocialMedia.Models.Post", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("Reacters");
                 });
 
             modelBuilder.Entity("SocialMedia.Models.User", b =>
                 {
-                    b.Navigation("Chatrooms");
-
-                    b.Navigation("CreatedComments");
+                    b.Navigation("Comments");
 
                     b.Navigation("CreatedPosts");
-                });
 
-            modelBuilder.Entity("SocialMedia.Models.chatroom", b =>
-                {
-                    b.Navigation("Messages");
+                    b.Navigation("Followers");
+
+                    b.Navigation("Followings");
+
+                    b.Navigation("ReactedPosts");
                 });
 #pragma warning restore 612, 618
         }
