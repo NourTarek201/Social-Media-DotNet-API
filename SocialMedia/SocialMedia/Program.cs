@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SocialMedia.Models;
+using SocialMedia.Repositories;
+using SocialMedia.Serveses;
 
 namespace SocialMedia
 {
@@ -19,10 +21,14 @@ namespace SocialMedia
                 .AddDefaultTokenProviders();
 
             builder.Services.AddControllersWithViews();
+         //   builder.Services.AddScoped<UserRepository>();
+
 
             // Add Swagger services
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
 
             var app = builder.Build();
 

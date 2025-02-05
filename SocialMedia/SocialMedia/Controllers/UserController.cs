@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SocialMedia.Models;
+
+using SocialMedia.Repositories;
+using SocialMedia.Serveses;
 using SocialMedia.ViewModel;
 
 namespace SocialMedia.Controllers
@@ -9,30 +13,80 @@ namespace SocialMedia.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly SocialDbContext _context;
-        public UserController(SocialDbContext context)
+      //  private readonly SocialDbContext _context;
+        
+        IUserRepository _userRepository;
+        public UserController(IUserRepository userRepository)
         {
-            _context = context;
+            _userRepository = userRepository;
+
         }
-        [HttpPost]
-        public ActionResult AddCategore([FromBody] UserviewModel catigure)
+
+        [HttpPost("Add")]
+        public ActionResult AddUser([FromBody] registrationViewModel user)
         {
-            User x = new User();
-            x.FirstName= catigure.firstName;
-            x.LastName = catigure.lastName;
-            x.Email = catigure.email;
-            x.UserName = catigure.password;
-            x.PhoneNumber = catigure.phone;
-              x.PasswordHash = catigure.password;   
-            _context.Users.Add(x);
-            _context.SaveChanges();
-            return Ok();
+            try
+            {
+                _userRepository.AddUser(user);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
-        [HttpGet]
+
+        [HttpGet("ByEmailAndpass")]
+        public IActionResult GetByEmailandPassword(string email, string password)
+        {
+            try
+            {
+               var user= _userRepository.GetByEmailandPassword(email, password);
+                return Ok(user);
+            }
+            
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("All")]
         public ActionResult getalluser()
         {
-           var x = _context.Users.ToList();
+           var x = _userRepository.GetAllUsers();
             return Ok(x);
         }
+
+        [HttpGet("byId")]
+        public IActionResult getuser(Guid id) 
+        {
+           var x= _userRepository.GetUserById(id);
+            return Ok(x);
+        }
+
+        [HttpGet("Username")]
+        public IActionResult getuserbyusername(string name)
+        {
+            var x = _userRepository.GetUserByUserName(name);
+            return Ok(x);
+        }
+
+        [HttpGet("byEmail")]
+        public IActionResult getuserbyemail(string email)
+        {
+            var x = _userRepository.GetUserByEmail(email);
+            return Ok(x);
+        }
+
+        [HttpDelete]
+        public IActionResult deleteuser(string username)
+        {
+            _userRepository.DeleteUser(username);
+            return Ok();
+        }
+
+        
+
     }
 }

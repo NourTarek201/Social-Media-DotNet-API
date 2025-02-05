@@ -7,9 +7,14 @@ namespace SocialMedia.Models
     public class SocialDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     {
         public SocialDbContext(DbContextOptions<SocialDbContext> options)
-            : base(options)
+         : base(options)
         {
         }
+
+        public SocialDbContext()
+        {
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

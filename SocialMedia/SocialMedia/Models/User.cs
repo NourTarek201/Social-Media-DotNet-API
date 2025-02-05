@@ -6,10 +6,15 @@ namespace SocialMedia.Models
 {
     public class User : BaseUser
     {
-        public List<Comment> Comments { get; set; } 
+        [JsonIgnore]
+        public List<Comment> Comments { get; set; }
+        [JsonIgnore]
         public List<UserFollower> Followers { get; set; }
+        [JsonIgnore]
         public List<UserFollower> Followings { get; set; }
+        [JsonIgnore]
         public virtual List<Chatroom> Chatrooms { get; set; }
+        [JsonIgnore]
         public List<UserReaction> ReactedPosts { get; set; }
     }
 }
