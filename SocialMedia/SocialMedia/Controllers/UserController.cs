@@ -2,9 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SocialMedia.Models;
-
-using SocialMedia.Repositories;
-using SocialMedia.Serveses;
+using SocialMedia.Repositories.Interfaces;
 using SocialMedia.ViewModel;
 
 namespace SocialMedia.Controllers

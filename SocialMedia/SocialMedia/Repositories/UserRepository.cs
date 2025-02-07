@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SocialMedia.Models;
-using SocialMedia.Serveses;
+using SocialMedia.Repositories.Interfaces;
 using SocialMedia.ViewModel;
 
 namespace SocialMedia.Repositories

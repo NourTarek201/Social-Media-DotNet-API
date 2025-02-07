@@ -1,7 +1,7 @@
 ﻿using SocialMedia.Models;
 using SocialMedia.ViewModel;
 
-namespace SocialMedia.Serveses
+namespace SocialMedia.Repositories.Interfaces
 {
     public interface IUserRepository
     {

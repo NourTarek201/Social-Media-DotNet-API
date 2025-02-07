@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SocialMedia.Models;
 using SocialMedia.Repositories;
-using SocialMedia.Serveses;
+using SocialMedia.Repositories.Interfaces;
 
 namespace SocialMedia
 {
@@ -29,6 +29,7 @@ namespace SocialMedia
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 
             var app = builder.Build();
 
