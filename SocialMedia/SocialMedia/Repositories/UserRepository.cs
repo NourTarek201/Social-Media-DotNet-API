@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SocialMedia.Models;
 using SocialMedia.Repositories.Interfaces;
 using SocialMedia.ViewModel;
@@ -16,7 +17,7 @@ namespace SocialMedia.Repositories
             _context = context;
         }
 
-        public void AddUser(registrationViewModel x)
+        public async Task AddUser(registrationViewModel x)
         {
             if (_context.Users.Any(u => u.Email == x.Email))
             {
@@ -37,33 +38,32 @@ namespace SocialMedia.Repositories
             };
             var Hashed = new PasswordHasher<User>();
             NewUser.PasswordHash = Hashed.HashPassword(NewUser, x.Password);
-            _context.Users.Add(NewUser);
-            _context.SaveChanges();
+            await _context.Users.AddAsync(NewUser);
+           await _context.SaveChangesAsync();
         }
-        public List<User> GetAllUsers()
+        public async Task<List<User>> GetAllUsers()
         {
-            
-            return _context.Users.ToList();
+            return await _context.Users.ToListAsync();
         }
-        public User GetUserById(Guid id)
+        public async Task<User> GetUserById(Guid id)
         {
-            return _context.Users.FirstOrDefault(u => u.Id == id);
+            return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
         }
-        public User GetUserByUserName(string name) {
-            return _context.Users.FirstOrDefault(u => u.UserName == name);
+        public async Task<User> GetUserByUserName(string name) {
+            return await _context.Users.FirstOrDefaultAsync(u => u.UserName == name);
         }
-        public User GetUserByEmail(string email) {
-            return _context.Users.FirstOrDefault(u => u.Email == email);
+        public async Task<User> GetUserByEmail(string email) {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
-        public void DeleteUser(string username)
+        public async Task DeleteUser(string username)
         {
            
-            _context.Users.Remove(_context.Users.FirstOrDefault(x=>x.UserName==username));
+            await _context.Users.Where(x=>x.UserName==username).ExecuteDeleteAsync();
             _context.SaveChanges();
         }
-        public User GetByEmailandPassword(string email, string password)
+        public async Task<User> GetByEmailandPassword(string email, string password)
         {
-            var user = _context.Users.FirstOrDefault(u => u.Email == email);
+            var user =await  _context.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (user == null)
             {
                 throw new Exception("Email is not found");
@@ -75,7 +75,6 @@ namespace SocialMedia.Repositories
             }
             return user;
         }
-        
 
     }
 }

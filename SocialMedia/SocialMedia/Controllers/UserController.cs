@@ -21,11 +21,11 @@ namespace SocialMedia.Controllers
         }
 
         [HttpPost("Add")]
-        public ActionResult AddUser([FromBody] registrationViewModel user)
+        public async Task<IActionResult> AddUser([FromBody] registrationViewModel user)
         {
             try
             {
-                _userRepository.AddUser(user);
+                await _userRepository.AddUser(user);
                 return Ok();
             }
             catch (Exception ex)
@@ -35,11 +35,11 @@ namespace SocialMedia.Controllers
         }
 
         [HttpGet("ByEmailAndpass")]
-        public IActionResult GetByEmailandPassword(string email, string password)
+        public async Task<IActionResult> GetByEmailandPassword(string email, string password)
         {
             try
             {
-               var user= _userRepository.GetByEmailandPassword(email, password);
+               var user= await _userRepository.GetByEmailandPassword(email, password);
                 return Ok(user);
             }
             
@@ -50,37 +50,37 @@ namespace SocialMedia.Controllers
         }
 
         [HttpGet("All")]
-        public ActionResult getalluser()
+        public async Task<IActionResult> getalluser()
         {
-           var x = _userRepository.GetAllUsers();
+           var x = await _userRepository.GetAllUsers();
             return Ok(x);
         }
 
         [HttpGet("byId")]
-        public IActionResult getuser(Guid id) 
+        public async Task<IActionResult> getuser(Guid id) 
         {
-           var x= _userRepository.GetUserById(id);
+            var x = await _userRepository.GetUserById(id);
             return Ok(x);
         }
 
         [HttpGet("Username")]
-        public IActionResult getuserbyusername(string name)
+        public async Task<IActionResult> getuserbyusername(string name)
         {
-            var x = _userRepository.GetUserByUserName(name);
+            var x =await _userRepository.GetUserByUserName(name);
             return Ok(x);
         }
 
         [HttpGet("byEmail")]
-        public IActionResult getuserbyemail(string email)
+        public async Task<IActionResult> getuserbyemail(string email)
         {
-            var x = _userRepository.GetUserByEmail(email);
+            var x = await _userRepository.GetUserByEmail(email);
             return Ok(x);
         }
 
         [HttpDelete]
-        public IActionResult deleteuser(string username)
+        public async Task<IActionResult> deleteuser(string username)
         {
-            _userRepository.DeleteUser(username);
+            await _userRepository.DeleteUser(username);
             return Ok();
         }
 
