@@ -9,12 +9,12 @@ namespace SocialMedia.Models
         [JsonIgnore]
         public List<Comment> Comments { get; set; }
         [JsonIgnore]
-        public List<UserFollower> Followers { get; set; }
+        public List<UserFollower>? Followers { get; set; }
         [JsonIgnore]
-        public List<UserFollower> Followings { get; set; }
+        public List<UserFollower>? Followings { get; set; }
         [JsonIgnore]
-        public virtual List<Chatroom> Chatrooms { get; set; }
+        public virtual List<Chatroom>? Chatrooms { get; set; }
         [JsonIgnore]
-        public List<UserReaction> ReactedPosts { get; set; }
+        public List<UserReaction>? ReactedPosts { get; set; }
     }
 }

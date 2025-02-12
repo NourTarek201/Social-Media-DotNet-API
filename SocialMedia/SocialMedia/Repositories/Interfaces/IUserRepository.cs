@@ -1,4 +1,5 @@
-﻿using SocialMedia.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using SocialMedia.Models;
 using SocialMedia.ViewModel;
 
 namespace SocialMedia.Repositories.Interfaces
@@ -12,5 +13,6 @@ namespace SocialMedia.Repositories.Interfaces
         Task<User> GetUserByEmail(string email);
         Task DeleteUser(string Username);
         Task<User> GetByEmailandPassword(string email, string password);
+        Task Changepass(string email, string oldpass, string newpass);
     }
 }

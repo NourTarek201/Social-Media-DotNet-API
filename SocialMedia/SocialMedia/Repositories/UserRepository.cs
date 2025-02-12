@@ -12,9 +12,14 @@ namespace SocialMedia.Repositories
     {
         private readonly SocialDbContext _context;
 
-        public UserRepository(SocialDbContext context)
+        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<User> _userManager;
+       
+        public UserRepository(SocialDbContext context, SignInManager<User> signInManager, UserManager<User> userManager)
         {
             _context = context;
+            _signInManager = signInManager;
+            _userManager = userManager;
         }
 
         public async Task AddUser(registrationViewModel x)
@@ -27,6 +32,7 @@ namespace SocialMedia.Repositories
             {
                 throw new Exception("Username is already taken");
             }
+           
             User NewUser = new User {
 
                FirstName = x.FirstName,
@@ -36,10 +42,9 @@ namespace SocialMedia.Repositories
                PhoneNumber = x.Phone,
 
             };
-            var Hashed = new PasswordHasher<User>();
-            NewUser.PasswordHash = Hashed.HashPassword(NewUser, x.Password);
-            await _context.Users.AddAsync(NewUser);
-           await _context.SaveChangesAsync();
+            await _userManager.CreateAsync(NewUser, x.Password);
+           // var code = await _userManager.GenerateEmailConfirmationTokenAsync(NewUser);
+
         }
         public async Task<List<User>> GetAllUsers()
         {
@@ -68,12 +73,16 @@ namespace SocialMedia.Repositories
             {
                 throw new Exception("Email is not found");
             }
-            var hasher = new PasswordHasher<User>();
-            if (hasher.VerifyHashedPassword(user, user.PasswordHash, password) == PasswordVerificationResult.Failed)
+            if (!await _userManager.CheckPasswordAsync(user, password))
             {
                 throw new Exception("Password is incorrect");
             }
             return user;
+        }
+        public async Task Changepass(string email, string oldpass, string newpass)
+        {
+            var user = await GetByEmailandPassword(email, oldpass);
+            await _userManager.ChangePasswordAsync(user, oldpass, newpass);
         }
 
     }

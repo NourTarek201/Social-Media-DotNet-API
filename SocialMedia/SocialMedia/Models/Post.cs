@@ -1,5 +1,6 @@
 ﻿using SocialMedia.Models.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace SocialMedia.Models
 {
@@ -8,8 +9,11 @@ namespace SocialMedia.Models
         public string MediaLink { get; set; }
         public Visibility PostPrivacy{ get; set; } = Visibility.Followers;
         public Guid UserId { get; set; }
+        [JsonIgnore]
         public virtual User User { get; set; }
-        public List<UserReaction> Reacters { get; set; }
-        public List<Comment> Comments { get; set; }
+        [JsonIgnore]
+        public List<UserReaction>? Reacters { get; set; }
+        [JsonIgnore]
+        public List<Comment>? Comments { get; set; }
     }
 }
