@@ -34,5 +34,9 @@ namespace SocialMedia.Repositories
         {
             return await dbSet.ToListAsync();
         }
+        public async Task<T> getById(Guid id)
+        {
+            return await dbSet.FirstOrDefaultAsync(x => x.Id == id);
+        }
     }
 }

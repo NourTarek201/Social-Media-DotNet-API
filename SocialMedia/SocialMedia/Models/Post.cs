@@ -9,6 +9,8 @@ namespace SocialMedia.Models
         public string MediaLink { get; set; }
         public Visibility PostPrivacy{ get; set; } = Visibility.Followers;
         public Guid UserId { get; set; }
+        public string? description { get; set; }
+
         [JsonIgnore]
         public virtual User User { get; set; }
         [JsonIgnore]

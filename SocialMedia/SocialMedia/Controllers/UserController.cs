@@ -58,34 +58,35 @@ namespace SocialMedia.Controllers
             }
         }
         [HttpPost]
-        //public async Task<IActionResult> Signin(string email, string password)
-        //{
-        //    try
-        //    {
-        //        var user = await _userManager.FindByEmailAsync(email);
+        public async Task<IActionResult> Signin(string email, string password)
+        {
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(email);
 
-        //        if (user == null || !await _userManager.CheckPasswordAsync(user, password))
-        //        {
-        //            return BadRequest("Invalid email or password.");
-        //        }
+                if (user == null || !await _userManager.CheckPasswordAsync(user, password))
+                {
+                    return BadRequest("Invalid email or password.");
+                }
+                //Console.WriteLine($"User {user.UserName} {user.Id} logged in.");
 
-        //        // var token = GenerateToken(user); // Generate token for the signed-in user
+                // var token = GenerateToken(user); // Generate token for the signed-in user
 
-        //        //  await _signInManager.PasswordSignInAsync(user, password, false, false);
-        //      //  await _userManager.GenerateUserTokenAsync(user);
-        //        return Ok(user);
-        //    }
+                //  await _signInManager.PasswordSignInAsync(user, password, false, false);
+                //  await _userManager.GenerateUserTokenAsync(user);
+                return Ok(user);
+            }
 
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //}
-
-       
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
 
-    [HttpGet("All")]
+
+
+        [HttpGet("All")]
         public async Task<IActionResult> getalluser()
         {
            var x = await _userRepository.GetAllUsers();

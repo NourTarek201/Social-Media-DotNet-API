@@ -1,0 +1,59 @@
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using SocialMedia.Models;
+using SocialMedia.Repositories.Interfaces;
+using SocialMedia.ViewModel;
+
+namespace SocialMedia.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class CommentController : ControllerBase
+    {
+        IBaseRepository<Comment> _commentRepository;
+        IBaseRepository<Post> _postRepository;
+        IUserRepository _userRepository;
+        public CommentController(IBaseRepository<Comment> commentRepository, IBaseRepository<Post> postRepository, IUserRepository userRepository)
+        {
+            _commentRepository = commentRepository;
+            _postRepository = postRepository;
+            _userRepository = userRepository;
+        }
+        [HttpPost("Add")]
+        public async Task<IActionResult> AddComment([FromBody] CommentViewModel comment)
+        {
+            try
+            {
+                Comment comment1 = new Comment
+                {
+                    Content = comment.Content,
+                    UserId = comment.UserId,
+                    PostId = comment.PostId
+                };
+               var user=await _userRepository.GetUserById(comment.UserId);
+                var post = await _postRepository.getById(comment.PostId);
+                if (user==null||post==null)
+                {
+                    return BadRequest("User or post not found");
+                }
+                return Ok("Comment added sucsefuly");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+         
+        
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> getall()
+        {
+           var com= await _commentRepository.getAll();
+            
+            return Ok(com);
+        }
+
+    }
+}
