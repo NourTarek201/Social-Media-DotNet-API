@@ -12,10 +12,12 @@ namespace SocialMedia.Controllers
     {
         IBaseRepository<Post> _postRepository;
         IUserRepository _userRepository;
-        public PostController(IBaseRepository<Post> postRepository, IUserRepository userRepository)
+        ICommentRepository _commentRepository;
+        public PostController(IBaseRepository<Post> postRepository, IUserRepository userRepository, ICommentRepository commentRepository)
         {
             _postRepository = postRepository;
             _userRepository = userRepository;
+            _commentRepository = commentRepository;
         }
         [HttpPost("Add")]
         public async Task<IActionResult> AddPost([FromBody] PostViewModel post)
@@ -81,9 +83,19 @@ namespace SocialMedia.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-
-
+        [HttpGet("PostComments")]
+        public async Task<IActionResult> UserComments(Guid Postid)
+        {
+            try
+            {
+                var comments = await _commentRepository.AllpostComments(Postid);
+                return Ok(comments);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
     }
 }

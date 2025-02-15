@@ -21,12 +21,17 @@ namespace SocialMedia.Controllers
         IUserRepository _userRepository;
         SignInManager<User> _signInManager;
         UserManager<User> _userManager;
+        ICommentRepository _commentRepository;
+        IPostRepository _postRepository;
        
-        public UserController(IUserRepository userRepository, UserManager<User> userManager,SignInManager<User>_signInManager)
+        public UserController(IUserRepository userRepository, UserManager<User> userManager,SignInManager<User>_signInManager,ICommentRepository commentRepository,IPostRepository postRepository)
         {
             _userRepository = userRepository;
             _userManager = userManager;
+            _commentRepository = commentRepository; 
+            _postRepository = postRepository;
         }
+
 
         [HttpPost("Add")]
         public async Task<IActionResult> AddUser([FromBody] registrationViewModel user)
@@ -43,7 +48,7 @@ namespace SocialMedia.Controllers
         }
   
 
-    [HttpGet("ByEmailAndpass")]
+        [HttpGet("ByEmailAndpass")]
         public async Task<IActionResult> GetByEmailandPassword(string email, string password)
         {
             try
@@ -57,34 +62,7 @@ namespace SocialMedia.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPost]
-        public async Task<IActionResult> Signin(string email, string password)
-        {
-            try
-            {
-                var user = await _userManager.FindByEmailAsync(email);
-
-                if (user == null || !await _userManager.CheckPasswordAsync(user, password))
-                {
-                    return BadRequest("Invalid email or password.");
-                }
-                //Console.WriteLine($"User {user.UserName} {user.Id} logged in.");
-
-                // var token = GenerateToken(user); // Generate token for the signed-in user
-
-                //  await _signInManager.PasswordSignInAsync(user, password, false, false);
-                //  await _userManager.GenerateUserTokenAsync(user);
-                return Ok(user);
-            }
-
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-
-
+        
 
         [HttpGet("All")]
         public async Task<IActionResult> getalluser()
@@ -115,7 +93,7 @@ namespace SocialMedia.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> deleteuser(string username)
+        public async Task<IActionResult> Deleteuser(string username)
         {
             await _userRepository.DeleteUser(username);
             return Ok();
@@ -133,9 +111,35 @@ namespace SocialMedia.Controllers
             await _userRepository.Changepass(email, oldpass, newpass);
             return Ok();
         }
-        
+        [HttpGet("UserComments")]
+        public async Task<IActionResult> UserComments(Guid userid)
+        {
+            try
+            {
+                var comments = await _commentRepository.AlluserComments(userid);
+                return Ok(comments);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet("UserPosts")]
+        public async Task<IActionResult> UserPosts(Guid userid)
+        {
+            try
+            {
+                var posts = await _postRepository.AlluserPosts(userid);
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
-        
+
+
 
     }
 }

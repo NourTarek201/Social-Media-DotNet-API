@@ -16,20 +16,17 @@ namespace SocialMedia
             // Add services to the container.
             builder.Services.AddDbContext<SocialDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("local")));
+            builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+            builder.Services.AddScoped<IPostRepository, PostRepository>();
 
             builder.Services.AddIdentity<User, IdentityRole<Guid>>()
                 .AddEntityFrameworkStores<SocialDbContext>()
                 .AddDefaultTokenProviders();
 
-            //builder.Services.ConfigureApplicationCookie(options =>
-            //{
-            //    options.LoginPath = "/Account/Login";
-            //    options.AccessDeniedPath = "/Account/AccessDenied";
-            //});
+          
 
 
             builder.Services.AddControllersWithViews();
-         //   builder.Services.AddScoped<UserRepository>();
 
 
             // Add Swagger services
