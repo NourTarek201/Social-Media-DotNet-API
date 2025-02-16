@@ -10,14 +10,16 @@ namespace SocialMedia.Controllers
     [ApiController]
     public class PostController : ControllerBase
     {
-        IBaseRepository<Post> _postRepository;
+        IBaseRepository<Post> _postBaserpository;
         IUserRepository _userRepository;
         ICommentRepository _commentRepository;
-        public PostController(IBaseRepository<Post> postRepository, IUserRepository userRepository, ICommentRepository commentRepository)
+        IPostRepository _postRepository;
+        public PostController(IBaseRepository<Post> PostCRUDRepository, IUserRepository userRepository, ICommentRepository commentRepository, IPostRepository postRepository)
         {
-            _postRepository = postRepository;
+            _postBaserpository = PostCRUDRepository;
             _userRepository = userRepository;
             _commentRepository = commentRepository;
+            _postRepository = postRepository;
         }
         [HttpPost("Add")]
         public async Task<IActionResult> AddPost([FromBody] PostViewModel post)
@@ -29,9 +31,9 @@ namespace SocialMedia.Controllers
                     UserId = post.UserId,
                     MediaLink = post.MediaLink,
                     PostPrivacy = post.PostPrivacy,
-                    UpdatedAt = post.UpdatedAt
+                    description=post.Description
                 };
-                await _postRepository.add(post1);
+                await _postBaserpository.add(post1);
                 return Ok();
             }
             catch (Exception ex)
@@ -45,7 +47,7 @@ namespace SocialMedia.Controllers
         {
             try
             {
-                var posts = await _postRepository.getAll();
+                var posts = await _postBaserpository.getAll();
                 return Ok(posts);
             }
             catch (Exception ex)
@@ -59,8 +61,7 @@ namespace SocialMedia.Controllers
             try
             {
                 var user = await _userRepository.GetUserByUserName(Username);
-                var posts = await _postRepository.getAll();
-                var userPosts = posts.Where(p => p.UserId == user.Id);
+                var userPosts = await _postRepository.AlluserPosts(user.Id);
                 return Ok(userPosts);
             }
             catch (Exception ex)
@@ -74,8 +75,8 @@ namespace SocialMedia.Controllers
         {
             try
             {
-                var post = await _postRepository.getById(id);
-                await _postRepository.delete(post);
+                var post = await _postBaserpository.getById(id);
+                await _postBaserpository.delete(post);
                 return Ok();
             }
             catch (Exception ex)
@@ -96,6 +97,26 @@ namespace SocialMedia.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpPost("Edit")]
+        public async Task<IActionResult> EditPost([FromBody] EditePostViewModel post)
+        {
+            try
+            {
+                var post1 = await _postBaserpository.getById(post.Id);
+                post1.description = post.Description;
+                post1.PostPrivacy = post.PostPrivacy;
+                post1.UpdatedAt = DateTime.Now;
+                await _postBaserpository.update(post1);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        
 
     }
 }

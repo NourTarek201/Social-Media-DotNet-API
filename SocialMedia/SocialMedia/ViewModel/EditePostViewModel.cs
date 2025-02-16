@@ -2,11 +2,12 @@
 
 namespace SocialMedia.ViewModel
 {
-    public class PostViewModel
+    public class EditePostViewModel
     {
-        public Guid UserId { get; set; }
-        public string MediaLink { get; set; }
+        public Guid Id { get; set; }
         public string? Description { get; set; }
         public Visibility PostPrivacy { get; set; }
+         
+
     }
 }
