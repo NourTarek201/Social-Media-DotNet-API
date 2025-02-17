@@ -6,7 +6,7 @@ namespace SocialMedia.Repositories.Interfaces
 {
     public interface IUserRepository
     {
-        Task AddUser(registrationViewModel user);
+        Task<string> AddUser(registrationViewModel x);
         Task<List<User>> GetAllUsers();
         Task<User> GetUserById(Guid id);
         Task<User> GetUserByUserName(string name);

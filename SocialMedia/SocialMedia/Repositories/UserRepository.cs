@@ -22,7 +22,7 @@ namespace SocialMedia.Repositories
             _userManager = userManager;
         }
 
-        public async Task AddUser(registrationViewModel x)
+        public async Task<string> AddUser(registrationViewModel x)
         {
             if (_context.Users.Any(u => u.Email == x.Email))
             {
@@ -32,19 +32,23 @@ namespace SocialMedia.Repositories
             {
                 throw new Exception("Username is already taken");
             }
-           
-            User NewUser = new User {
 
-               FirstName = x.FirstName,
-               LastName = x.LastName,
-               Email = x.Email,
-               UserName = x.Username,
-               PhoneNumber = x.Phone,
-
+            User NewUser = new User
+            {
+                FirstName = x.FirstName,
+                LastName = x.LastName,
+                Email = x.Email,
+                UserName = x.Username,
+                PhoneNumber = x.Phone,
             };
-            await _userManager.CreateAsync(NewUser, x.Password);
-           // var code = await _userManager.GenerateEmailConfirmationTokenAsync(NewUser);
 
+            var results = await _userManager.CreateAsync(NewUser, x.Password);
+            string ans = "User created successfully";
+            if (!results.Succeeded)
+            {
+                ans = string.Join(", ", results.Errors.Select(e => e.Description));
+            }
+            return ans;
         }
         public async Task<List<User>> GetAllUsers()
         {

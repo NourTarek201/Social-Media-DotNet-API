@@ -38,8 +38,8 @@ namespace SocialMedia.Controllers
         {
             try
             {
-                await _userRepository.AddUser(user);
-                return Ok();
+                var result = await _userRepository.AddUser(user);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -98,6 +98,7 @@ namespace SocialMedia.Controllers
             await _userRepository.DeleteUser(username);
             return Ok();
         }
+
         [HttpPost("ChangePassword")]
         public async Task<IActionResult> Changepass(string email,string oldpass,string newpass)
         {
