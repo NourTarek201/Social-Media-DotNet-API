@@ -7,6 +7,7 @@ using SocialMedia.Models;
 using SocialMedia.Repositories;
 using SocialMedia.Repositories.Interfaces;
 using SocialMedia.ViewModel;
+using SocialMedia.ViewModel.Edite;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -99,6 +100,7 @@ namespace SocialMedia.Controllers
             return Ok();
         }
 
+
         [HttpPost("ChangePassword")]
         public async Task<IActionResult> Changepass(string email,string oldpass,string newpass)
         {
@@ -138,8 +140,19 @@ namespace SocialMedia.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-
+        [HttpPost("EditeUser")]
+        public async Task<IActionResult> EditeUser([FromBody] EditeUserViewModel model)
+        {
+            try
+            {
+                var result = await _userRepository.EditeUser(model);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
 
     }

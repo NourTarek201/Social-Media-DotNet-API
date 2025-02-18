@@ -1,6 +1,6 @@
 ﻿using SocialMedia.Models.Enums;
 
-namespace SocialMedia.ViewModel
+namespace SocialMedia.ViewModel.Edite
 {
     public class EditePostViewModel
     {

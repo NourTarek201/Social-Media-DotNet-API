@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using SocialMedia.Models;
 using SocialMedia.Repositories.Interfaces;
 using SocialMedia.ViewModel;
+using SocialMedia.ViewModel.Edite;
 
 namespace SocialMedia.Controllers
 {

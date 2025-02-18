@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using SocialMedia.Models;
 using SocialMedia.Repositories.Interfaces;
 using SocialMedia.ViewModel;
+using SocialMedia.ViewModel.Edite;
 
 namespace SocialMedia.Repositories
 {
@@ -87,6 +88,25 @@ namespace SocialMedia.Repositories
         {
             var user = await GetByEmailandPassword(email, oldpass);
             await _userManager.ChangePasswordAsync(user, oldpass, newpass);
+        }
+        public async Task <string> EditeUser(EditeUserViewModel model)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == model.Id);
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
+            if(_context.Users.FirstOrDefault(x=>x.UserName==model.Username)!= null)
+            {
+                throw new Exception("Username is already taken");
+            }
+            user.FirstName = model.firstName;
+            user.LastName = model.lastName;
+            user.UserName = model.Username;
+            user.PhoneNumber = model.phone;
+            await _context.SaveChangesAsync();
+            return "User updated successfully";
+
         }
 
     }

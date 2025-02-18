@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SocialMedia.Models;
 using SocialMedia.Repositories.Interfaces;
 using SocialMedia.ViewModel;
+using SocialMedia.ViewModel.Edite;
 
 namespace SocialMedia.Controllers
 {

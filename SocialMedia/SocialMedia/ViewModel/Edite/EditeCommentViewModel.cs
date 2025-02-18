@@ -1,4 +1,4 @@
-﻿namespace SocialMedia.ViewModel
+﻿namespace SocialMedia.ViewModel.Edite
 {
     public class EditeCommentViewModel
     {
