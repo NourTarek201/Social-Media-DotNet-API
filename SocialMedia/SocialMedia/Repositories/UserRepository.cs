@@ -2,10 +2,14 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using SocialMedia.Models;
 using SocialMedia.Repositories.Interfaces;
 using SocialMedia.ViewModel;
 using SocialMedia.ViewModel.Edite;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace SocialMedia.Repositories
 {
@@ -15,12 +19,14 @@ namespace SocialMedia.Repositories
 
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
-       
-        public UserRepository(SocialDbContext context, SignInManager<User> signInManager, UserManager<User> userManager)
+        private readonly IConfiguration _configuration;
+
+        public UserRepository(SocialDbContext context, SignInManager<User> signInManager, UserManager<User> userManager, IConfiguration configuration)
         {
             _context = context;
             _signInManager = signInManager;
             _userManager = userManager;
+            _configuration= configuration;
         }
 
         public async Task<string> AddUser(registrationViewModel x)
@@ -108,6 +114,41 @@ namespace SocialMedia.Repositories
             return "User updated successfully";
 
         }
+        public async Task<string?> Login(LoginViewModel req)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == req.Email);
+            if (user is null)
+            {
+                throw new Exception("Invalid username");
+            }
+            var result = await _signInManager.CheckPasswordSignInAsync(user, req.Password, false);
+            if (!result.Succeeded)
+            {
+                throw new Exception("Invalid password");
+            }
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub,_configuration["AppSettings:Subject"]!),
+                new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
+                new Claim("Id",user.Id.ToString()),
+                new Claim("Email",user.Email.ToString()),
+            };
+            var key=new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["AppSettings:Token"]!));
+            var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var token = new JwtSecurityToken(
+                _configuration["AppSettings:Issuer"],
+                _configuration["AppSettings:Audience"],
+                claims,
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: signIn
+                );
+            string tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+            user.SecurityStamp = tokenString;
+            await _userManager.UpdateAsync(user);
+
+            return tokenString;
+        }
+        
 
     }
 }

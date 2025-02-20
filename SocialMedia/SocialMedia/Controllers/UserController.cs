@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -63,13 +64,23 @@ namespace SocialMedia.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        
-
+        //[Authorize]
         [HttpGet("All")]
         public async Task<IActionResult> getalluser()
         {
-           var x = await _userRepository.GetAllUsers();
-            return Ok(x);
+            try
+            {
+                var x = await _userRepository.GetAllUsers();
+                return Ok(x);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized("You are not authorized to access this resource.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("byId")]
@@ -140,12 +151,28 @@ namespace SocialMedia.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPost("EditeUser")]
+        
+        [HttpPut("EditeUser")]
         public async Task<IActionResult> EditeUser([FromBody] EditeUserViewModel model)
         {
             try
             {
                 var result = await _userRepository.EditeUser(model);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginViewModel req)
+        {
+            try
+            {
+                var result = await _userRepository.Login(req);
+             
+
                 return Ok(result);
             }
             catch (Exception ex)

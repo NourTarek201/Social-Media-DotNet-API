@@ -98,7 +98,7 @@ namespace SocialMedia.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPost("Edit")]
+        [HttpPut("Edit")]
         public async Task<IActionResult> EditPost([FromBody] EditePostViewModel post)
         {
             try

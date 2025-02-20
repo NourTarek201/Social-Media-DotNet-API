@@ -54,7 +54,7 @@ namespace SocialMedia.Controllers
             
             return Ok(com);
         }
-        [HttpPost("Edit")]
+        [HttpPut("Edit")]
         public async Task<IActionResult>Edite([FromBody]EditeCommentViewModel Editcomment)
         {
             try
