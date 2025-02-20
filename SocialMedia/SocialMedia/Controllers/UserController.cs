@@ -64,7 +64,7 @@ namespace SocialMedia.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpGet("All")]
         public async Task<IActionResult> getalluser()
         {
