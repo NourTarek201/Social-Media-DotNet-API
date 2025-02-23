@@ -10,6 +10,7 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using Swashbuckle;
 using Scalar.AspNetCore;
+using SocialMedia.Servises;
 
 namespace SocialMedia
 {
@@ -41,7 +42,7 @@ namespace SocialMedia
             // Add services to the container.
             builder.Services.AddDbContext<SocialDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("local")));
-
+            builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<ICommentRepository, CommentRepository>();
             builder.Services.AddScoped<IPostRepository, PostRepository>();
 

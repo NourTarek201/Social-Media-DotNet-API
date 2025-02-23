@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using SocialMedia.Controllers;
 using SocialMedia.Models;
 using SocialMedia.Repositories.Interfaces;
+using SocialMedia.Servises;
 using SocialMedia.ViewModel;
 using SocialMedia.ViewModel.Edite;
 using System.IdentityModel.Tokens.Jwt;
@@ -19,14 +21,16 @@ namespace SocialMedia.Repositories
 
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
-        private readonly IConfiguration _configuration;
+        private readonly IConfiguration _configuration; 
+        private readonly IEmailService _emailService;
 
-        public UserRepository(SocialDbContext context, SignInManager<User> signInManager, UserManager<User> userManager, IConfiguration configuration)
+        public UserRepository(IEmailService emailService, SocialDbContext context, SignInManager<User> signInManager, UserManager<User> userManager, IConfiguration configuration)
         {
             _context = context;
             _signInManager = signInManager;
             _userManager = userManager;
             _configuration= configuration;
+            _emailService = emailService;
         }
 
         public async Task<string> AddUser(registrationViewModel x)
@@ -51,12 +55,23 @@ namespace SocialMedia.Repositories
 
             var results = await _userManager.CreateAsync(NewUser, x.Password);
             string ans = "User created successfully";
-            if (!results.Succeeded)
+
+            if (results.Succeeded)
+            {
+                await SendEmail(NewUser.Email, "Welcome to Our Project!", "Thank you for registering.");
+            }
+            else
             {
                 ans = string.Join(", ", results.Errors.Select(e => e.Description));
             }
+
             return ans;
         }
+
+        
+
+
+
         public async Task<List<User>> GetAllUsers()
         {
             return await _context.Users.ToListAsync();
@@ -148,7 +163,26 @@ namespace SocialMedia.Repositories
 
             return tokenString;
         }
-        
+        private async Task<string> SendEmail(string to, string subject = "Hello To our project", string body = "Is this really you?")
+        {
+            if (string.IsNullOrWhiteSpace(to) ||
+                string.IsNullOrWhiteSpace(subject) ||
+                string.IsNullOrWhiteSpace(body))
+            {
+                return "Failed: All fields (To, Subject, Body) are required!";
+            }
+
+            try
+            {
+                await _emailService.SendEmailAsync(to, subject, body);
+                return "Email sent successfully!";
+            }
+            catch (Exception ex)
+            {
+                return $"Failed to send email. Error: {ex.Message}";
+            }
+        }
+
 
     }
 }
