@@ -175,22 +175,6 @@
   },
   {
     "ContainingType": "SocialMedia.Controllers.UserController",
-    "Method": "AddUser",
-    "RelativePath": "api/User/Add",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "user",
-        "Type": "SocialMedia.ViewModel.registrationViewModel",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "SocialMedia.Controllers.UserController",
     "Method": "getalluser",
     "RelativePath": "api/User/All",
     "HttpMethod": "GET",
@@ -312,6 +296,22 @@
   },
   {
     "ContainingType": "SocialMedia.Controllers.UserController",
+    "Method": "AddUser",
+    "RelativePath": "api/User/Regestration",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "user",
+        "Type": "SocialMedia.ViewModel.registrationViewModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SocialMedia.Controllers.UserController",
     "Method": "UserComments",
     "RelativePath": "api/User/UserComments",
     "HttpMethod": "GET",
@@ -353,6 +353,27 @@
       {
         "Name": "userid",
         "Type": "System.Guid",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SocialMedia.Controllers.UserController",
+    "Method": "VerifyEmail",
+    "RelativePath": "api/User/verify-email",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Guid",
+        "IsRequired": false
+      },
+      {
+        "Name": "token",
+        "Type": "System.String",
         "IsRequired": false
       }
     ],

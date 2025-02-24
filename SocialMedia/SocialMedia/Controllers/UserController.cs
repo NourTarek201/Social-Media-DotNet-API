@@ -35,7 +35,7 @@ namespace SocialMedia.Controllers
         }
 
 
-        [HttpPost("Add")]
+        [HttpPost("Regestration")]
         public async Task<IActionResult> AddUser([FromBody] registrationViewModel user)
         {
             try
@@ -48,7 +48,20 @@ namespace SocialMedia.Controllers
                 return BadRequest(ex.Message);
             }
         }
-  
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginViewModel req)
+        {
+            try
+            {
+                var result = await _userRepository.Login(req);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         [HttpGet("ByEmailAndpass")]
         public async Task<IActionResult> GetByEmailandPassword(string email, string password)
@@ -165,20 +178,24 @@ namespace SocialMedia.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPost("Login")]
-        public async Task<IActionResult> Login([FromBody] LoginViewModel req)
-        {
-            try
-            {
-                var result = await _userRepository.Login(req);
-             
+       
 
-                return Ok(result);
-            }
-            catch (Exception ex)
+        [HttpGet("verify-email")]
+        public async Task<IActionResult> VerifyEmail(Guid userId, string token)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { message = "Invalid user." });
             }
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            if (!result.Succeeded)
+            {
+                return BadRequest(new { message = "Invalid or expired token." });
+            }
+
+            return Ok(new { message = "Email verified successfully!" });
         }
 
 

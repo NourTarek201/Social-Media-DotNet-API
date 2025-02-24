@@ -10,6 +10,7 @@ using SocialMedia.Servises;
 using SocialMedia.ViewModel;
 using SocialMedia.ViewModel.Edite;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 
@@ -58,19 +59,48 @@ namespace SocialMedia.Repositories
 
             if (results.Succeeded)
             {
-                await SendEmail(NewUser.Email, "Welcome to Our Project!", "Thank you for registering.");
+               
+                var emailToken = await _userManager.GenerateEmailConfirmationTokenAsync(NewUser);
+                var encodedToken = WebUtility.UrlEncode(emailToken);
+                var verificationUrl = $"http://localhost:5051/api/user/verify-email?userId={NewUser.Id}&token={encodedToken}";
+                #region The body
+                string emailBody = $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{ font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }}
+        .container {{ max-width: 600px; margin: 20px auto; background: #ffffff; padding: 20px; border-radius: 10px; 
+                      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); text-align: center; }}
+        .header {{ font-size: 24px; font-weight: bold; color: #333; margin-bottom: 10px; }}
+        .content {{ font-size: 16px; color: #555; margin-bottom: 20px; }}
+        .btn {{ display: inline-block; padding: 12px 20px; font-size: 18px; color: #fff; background-color: #28a745; 
+                text-decoration: none; border-radius: 5px; }}
+        .footer {{ margin-top: 20px; font-size: 14px; color: #777; }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>Welcome to Our Project!</div>
+        <div class='content'>
+            Thank you for signing up. Please click the button below to verify your email address.
+        </div>
+        <a href='{verificationUrl}' class='btn'>Verify Email</a>
+        <div class='footer'>
+            If you did not create an account, please ignore this email.
+        </div>
+    </div>
+</body>
+</html>";
+                #endregion 
+                await SendEmail(NewUser.Email, $"Hello {NewUser.FirstName} {NewUser.LastName}", emailBody);
             }
             else
             {
                 ans = string.Join(", ", results.Errors.Select(e => e.Description));
             }
-
             return ans;
         }
-
-        
-
-
 
         public async Task<List<User>> GetAllUsers()
         {
@@ -141,14 +171,27 @@ namespace SocialMedia.Repositories
             {
                 throw new Exception("Invalid password");
             }
+            if (!await _userManager.IsEmailConfirmedAsync(user))
+            {
+                return "Email is not verified. Please check your inbox.";
+            }
+            string tokenString = GenerateJwtToken(user);
+            user.SecurityStamp = tokenString;
+            await _userManager.UpdateAsync(user);
+
+            return tokenString;
+        }
+
+        private string GenerateJwtToken(User user)
+        {
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub,_configuration["AppSettings:Subject"]!),
-                new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
-                new Claim("Id",user.Id.ToString()),
-                new Claim("Email",user.Email.ToString()),
+                new Claim(JwtRegisteredClaimNames.Sub, _configuration["AppSettings:Subject"]!),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim("Id", user.Id.ToString()),
+                new Claim("Email", user.Email.ToString()),
             };
-            var key=new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["AppSettings:Token"]!));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["AppSettings:Token"]!));
             var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(
                 _configuration["AppSettings:Issuer"],
@@ -156,12 +199,8 @@ namespace SocialMedia.Repositories
                 claims,
                 expires: DateTime.Now.AddDays(1),
                 signingCredentials: signIn
-                );
-            string tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-            user.SecurityStamp = tokenString;
-            await _userManager.UpdateAsync(user);
-
-            return tokenString;
+            );
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
         private async Task<string> SendEmail(string to, string subject = "Hello To our project", string body = "Is this really you?")
         {
@@ -171,7 +210,6 @@ namespace SocialMedia.Repositories
             {
                 return "Failed: All fields (To, Subject, Body) are required!";
             }
-
             try
             {
                 await _emailService.SendEmailAsync(to, subject, body);

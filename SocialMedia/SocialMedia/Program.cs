@@ -46,9 +46,13 @@ namespace SocialMedia
             builder.Services.AddScoped<ICommentRepository, CommentRepository>();
             builder.Services.AddScoped<IPostRepository, PostRepository>();
 
-            builder.Services.AddIdentity<User, IdentityRole<Guid>>()
+            builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
+                {
+                    options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
+                })
                 .AddEntityFrameworkStores<SocialDbContext>()
                 .AddDefaultTokenProviders();
+
 
             builder.Services.AddControllersWithViews();
 
