@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SocialMedia.Models;
+using SocialMedia.Models.Context;
 using SocialMedia.Repositories.Interfaces;
 using SocialMedia.ViewModel;
 

@@ -350,3 +350,10 @@ D:\Projects\Social Media Samir\Social-Media-DotNet-API\SocialMedia\SocialMedia\o
 D:\Projects\Social Media Samir\Social-Media-DotNet-API\SocialMedia\SocialMedia\obj\Debug\net8.0\SocialMedia.pdb
 D:\Projects\Social Media Samir\Social-Media-DotNet-API\SocialMedia\SocialMedia\obj\Debug\net8.0\SocialMedia.genruntimeconfig.cache
 D:\Projects\Social Media Samir\Social-Media-DotNet-API\SocialMedia\SocialMedia\obj\Debug\net8.0\ref\SocialMedia.dll
+D:\Projects\Social Media Samir\Social-Media-DotNet-API\SocialMedia\SocialMedia\bin\Debug\net8.0\BouncyCastle.Cryptography.dll
+D:\Projects\Social Media Samir\Social-Media-DotNet-API\SocialMedia\SocialMedia\bin\Debug\net8.0\MailKit.dll
+D:\Projects\Social Media Samir\Social-Media-DotNet-API\SocialMedia\SocialMedia\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\Projects\Social Media Samir\Social-Media-DotNet-API\SocialMedia\SocialMedia\bin\Debug\net8.0\MimeKit.dll
+D:\Projects\Social Media Samir\Social-Media-DotNet-API\SocialMedia\SocialMedia\bin\Debug\net8.0\Scalar.AspNetCore.dll
+D:\Projects\Social Media Samir\Social-Media-DotNet-API\SocialMedia\SocialMedia\bin\Debug\net8.0\System.Security.Cryptography.Pkcs.dll
+D:\Projects\Social Media Samir\Social-Media-DotNet-API\SocialMedia\SocialMedia\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll

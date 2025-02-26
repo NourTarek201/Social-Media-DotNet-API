@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SocialMedia.Models;
+using SocialMedia.Models.Context;
 using SocialMedia.Repositories.Interfaces;
 
 namespace SocialMedia.Repositories
@@ -13,7 +14,7 @@ namespace SocialMedia.Repositories
             _context = context;
             dbSet = _context.Set<T>();
         }
-        public async Task<T> add(T entity){
+        public virtual async Task<T> add(T entity){
             await dbSet.AddAsync(entity);
             await _context.SaveChangesAsync();
             return entity;

@@ -42,6 +42,48 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "SocialMedia.Controllers.FollowersController",
+    "Method": "getAllFollowers",
+    "RelativePath": "api/Followers",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SocialMedia.Controllers.FollowersController",
+    "Method": "FollowUser",
+    "RelativePath": "api/Followers/FollowUser",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "followingUserId",
+        "Type": "System.Guid",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SocialMedia.Controllers.FollowersController",
+    "Method": "unFollowUser",
+    "RelativePath": "api/Followers/unFollowUser",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "followingUserId",
+        "Type": "System.Guid",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "SocialMedia.Controllers.PostController",
     "Method": "DeletePost",
     "RelativePath": "api/Post",
@@ -297,14 +339,14 @@
   {
     "ContainingType": "SocialMedia.Controllers.UserController",
     "Method": "AddUser",
-    "RelativePath": "api/User/Regestration",
+    "RelativePath": "api/User/Registeration",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "user",
-        "Type": "SocialMedia.ViewModel.registrationViewModel",
+        "Type": "SocialMedia.ViewModel.registerationViewModel",
         "IsRequired": true
       }
     ],

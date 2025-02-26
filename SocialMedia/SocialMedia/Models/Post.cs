@@ -11,11 +11,11 @@ namespace SocialMedia.Models
         public Guid UserId { get; set; }
         public string? description { get; set; }
 
-        [JsonIgnore]
+        //[JsonIgnore]
         public virtual User User { get; set; }
-        [JsonIgnore]
-        public List<UserReaction>? Reacters { get; set; }
-        [JsonIgnore]
-        public List<Comment>? Comments { get; set; }
+        //[JsonIgnore]
+        public virtual List<UserReaction> Reacters { get; set; } = new List<UserReaction>();
+        //[JsonIgnore]
+        public virtual List<Comment> Comments { get; set; } = new List<Comment>();
     }
 }

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace SocialMedia.Models
+namespace SocialMedia.Models.Context
 {
     public class SocialDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     {
@@ -51,6 +51,14 @@ namespace SocialMedia.Models
             .HasForeignKey(uf => uf.PostId)
             .OnDelete(DeleteBehavior.Restrict);
 
+
+            //post comments 1-M
+            modelBuilder.Entity<Comment>()
+                .HasOne(p => p.Post)
+                .WithMany(u => u.Comments)
+                .HasForeignKey(p => p.PostId)
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
 
         public virtual DbSet<User> Users { get; set; }
@@ -62,7 +70,7 @@ namespace SocialMedia.Models
         public virtual DbSet<UserReaction> UserReaction { get; set; }
         public virtual DbSet<UserFollower> Followers { get; set; }
 
-        
+
 
 
     }

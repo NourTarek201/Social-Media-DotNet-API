@@ -2,7 +2,7 @@
 
 namespace SocialMedia.ViewModel
 {
-    public class registrationViewModel
+    public class registerationViewModel
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

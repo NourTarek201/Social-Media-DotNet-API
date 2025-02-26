@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SocialMedia.Controllers;
 using SocialMedia.Models;
+using SocialMedia.Models.Context;
 using SocialMedia.Repositories.Interfaces;
 using SocialMedia.Servises;
 using SocialMedia.ViewModel;
@@ -34,7 +35,7 @@ namespace SocialMedia.Repositories
             _emailService = emailService;
         }
 
-        public async Task<string> AddUser(registrationViewModel x)
+        public async Task<string> AddUser(registerationViewModel x)
         {
             if (_context.Users.Any(u => u.Email == x.Email))
             {
@@ -108,7 +109,7 @@ namespace SocialMedia.Repositories
         }
         public async Task<User> GetUserById(Guid id)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            return await _context.Users.Include(f=>f.Followings).Include(fo=>fo.Followers).FirstOrDefaultAsync(u => u.Id == id);
         }
         public async Task<User> GetUserByUserName(string name) {
             return await _context.Users.FirstOrDefaultAsync(u => u.UserName == name);
@@ -178,7 +179,6 @@ namespace SocialMedia.Repositories
             string tokenString = GenerateJwtToken(user);
             user.SecurityStamp = tokenString;
             await _userManager.UpdateAsync(user);
-
             return tokenString;
         }
 

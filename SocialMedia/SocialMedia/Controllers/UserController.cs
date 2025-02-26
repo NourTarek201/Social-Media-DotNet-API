@@ -35,8 +35,8 @@ namespace SocialMedia.Controllers
         }
 
 
-        [HttpPost("Regestration")]
-        public async Task<IActionResult> AddUser([FromBody] registrationViewModel user)
+        [HttpPost("Registeration")]
+        public async Task<IActionResult> AddUser([FromBody] registerationViewModel user)
         {
             try
             {

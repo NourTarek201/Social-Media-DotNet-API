@@ -11,6 +11,8 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle;
 using Scalar.AspNetCore;
 using SocialMedia.Servises;
+using SocialMedia.Services;
+using SocialMedia.Models.Context;
 
 namespace SocialMedia
 {
@@ -62,6 +64,7 @@ namespace SocialMedia
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            builder.Services.AddScoped<FollowerService>();
 
             var app = builder.Build();
 

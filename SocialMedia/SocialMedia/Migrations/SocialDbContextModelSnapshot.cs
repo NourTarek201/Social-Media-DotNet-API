@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using SocialMedia.Models;
+using SocialMedia.Models.Context;
 
 #nullable disable
 
@@ -242,6 +242,8 @@ namespace SocialMedia.Migrations
 
                     b.HasIndex("ChatroomId");
 
+                    b.HasIndex("SenderId");
+
                     b.ToTable("Messages");
                 });
 
@@ -326,9 +328,11 @@ namespace SocialMedia.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -510,7 +514,7 @@ namespace SocialMedia.Migrations
                     b.HasOne("SocialMedia.Models.Post", "Post")
                         .WithMany("Comments")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("SocialMedia.Models.User", "User")
@@ -529,6 +533,14 @@ namespace SocialMedia.Migrations
                     b.HasOne("SocialMedia.Models.Chatroom", null)
                         .WithMany("Messages")
                         .HasForeignKey("ChatroomId");
+
+                    b.HasOne("SocialMedia.Models.User", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("SocialMedia.Models.Post", b =>
