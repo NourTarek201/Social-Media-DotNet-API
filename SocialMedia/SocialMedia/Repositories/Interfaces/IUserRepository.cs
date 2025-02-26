@@ -17,5 +17,7 @@ namespace SocialMedia.Repositories.Interfaces
         Task Changepass(string email, string oldpass, string newpass);
         Task<string> EditeUser(EditeUserViewModel model);
         Task<string?> Login(LoginViewModel req);
+        Task<string> ForgotPassword(string email);
+        Task<string> AutoResetPassword(Guid userId, string token);
     }
 }

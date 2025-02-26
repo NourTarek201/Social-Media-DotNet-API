@@ -190,6 +190,59 @@ namespace SocialMedia.Repositories
                 return $"Failed to send email. Error: {ex.Message}";
             }
         }
+       
+        public async Task<string> ForgotPassword(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return "User not found.";
+            }
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            var resetUrl = $"http://localhost:5051/api/user/auto-reset-password?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+            string emailBody = _emailService.ForgotPasswordBody(resetUrl);
+            await _emailService.SendEmailAsync(user.Email, "Reset Your Password", emailBody);
+
+            return "Password reset link sent to your email.";
+        }
+        public async Task<string> AutoResetPassword(Guid userId, string token)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                return "Invalid user.";
+            }
+            var isValidToken = await _userManager.VerifyUserTokenAsync(user,
+                _userManager.Options.Tokens.PasswordResetTokenProvider, "ResetPassword", token);
+
+            if (!isValidToken)
+            {
+                return "Invalid or expired token.";
+            }
+
+            string newPassword = GenerateRandomPassword();
+
+            var resetResult = await _userManager.ResetPasswordAsync(user, token, newPassword);
+            if (!resetResult.Succeeded)
+            {
+                return "Password reset failed.";
+            }
+
+            string emailBody = _emailService.PasswordRestBody(newPassword);
+
+            await _emailService.SendEmailAsync(user.Email, "Your Password Has Been Reset", emailBody);
+
+            return "Password has been reset. Check your email for the new password.";
+        }
+        private string GenerateRandomPassword()
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$!";
+            var random = new Random();
+            return new string(Enumerable.Repeat(chars, 12)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
 
 
     }
