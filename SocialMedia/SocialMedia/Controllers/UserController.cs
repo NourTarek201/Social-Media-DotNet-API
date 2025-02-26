@@ -197,6 +197,21 @@ namespace SocialMedia.Controllers
 
             return Ok(new { message = "Email verified successfully!" });
         }
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpGet("get-user")]
+        public IActionResult GetUser()
+        {
+            var userIdString = User.FindFirst("Id")?.Value; // Extract user ID
+
+            if (Guid.TryParse(userIdString, out Guid userId))
+            {
+                return Ok(new { message = "Success", userId });
+            }
+
+            return Unauthorized(new { message = "Invalid or missing user ID" });
+        }
+
+
 
 
     }

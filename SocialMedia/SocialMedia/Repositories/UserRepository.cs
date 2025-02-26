@@ -59,40 +59,10 @@ namespace SocialMedia.Repositories
 
             if (results.Succeeded)
             {
-               
                 var emailToken = await _userManager.GenerateEmailConfirmationTokenAsync(NewUser);
                 var encodedToken = WebUtility.UrlEncode(emailToken);
                 var verificationUrl = $"http://localhost:5051/api/user/verify-email?userId={NewUser.Id}&token={encodedToken}";
-                #region The body
-                string emailBody = $@"
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        body {{ font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }}
-        .container {{ max-width: 600px; margin: 20px auto; background: #ffffff; padding: 20px; border-radius: 10px; 
-                      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); text-align: center; }}
-        .header {{ font-size: 24px; font-weight: bold; color: #333; margin-bottom: 10px; }}
-        .content {{ font-size: 16px; color: #555; margin-bottom: 20px; }}
-        .btn {{ display: inline-block; padding: 12px 20px; font-size: 18px; color: #fff; background-color: #28a745; 
-                text-decoration: none; border-radius: 5px; }}
-        .footer {{ margin-top: 20px; font-size: 14px; color: #777; }}
-    </style>
-</head>
-<body>
-    <div class='container'>
-        <div class='header'>Welcome to Our Project!</div>
-        <div class='content'>
-            Thank you for signing up. Please click the button below to verify your email address.
-        </div>
-        <a href='{verificationUrl}' class='btn'>Verify Email</a>
-        <div class='footer'>
-            If you did not create an account, please ignore this email.
-        </div>
-    </div>
-</body>
-</html>";
-                #endregion 
+                string emailBody= _emailService.EmailBody(verificationUrl);
                 await SendEmail(NewUser.Email, $"Hello {NewUser.FirstName} {NewUser.LastName}", emailBody);
             }
             else
