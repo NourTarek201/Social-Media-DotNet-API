@@ -12,6 +12,8 @@ using SocialMedia.ViewModel.Edite;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using SocialMedia.Servises;
+
 namespace SocialMedia.Controllers
 {
     [Route("api/[controller]")]
@@ -25,13 +27,15 @@ namespace SocialMedia.Controllers
         UserManager<User> _userManager;
         ICommentRepository _commentRepository;
         IPostRepository _postRepository;
-       
-        public UserController(IUserRepository userRepository, UserManager<User> userManager,SignInManager<User>_signInManager,ICommentRepository commentRepository,IPostRepository postRepository)
+        IEmailService _emailService;
+
+        public UserController(IEmailService EemailService, IUserRepository userRepository, UserManager<User> userManager,SignInManager<User>_signInManager,ICommentRepository commentRepository,IPostRepository postRepository)
         {
             _userRepository = userRepository;
             _userManager = userManager;
             _commentRepository = commentRepository; 
             _postRepository = postRepository;
+            _emailService = EemailService;
         }
 
 
@@ -97,9 +101,13 @@ namespace SocialMedia.Controllers
         }
 
         [HttpGet("byId")]
-        public async Task<IActionResult> getuser(Guid id) 
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> getuser() 
         {
-            var x = await _userRepository.GetUserById(id);
+            var userIdString = User.FindFirst("Id")?.Value;
+            Guid.TryParse(userIdString, out Guid userId);
+            
+            var x = await _userRepository.GetUserById(userId);
             return Ok(x);
         }
 
@@ -178,8 +186,8 @@ namespace SocialMedia.Controllers
                 return BadRequest(ex.Message);
             }
         }
-       
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet("verify-email")]
         public async Task<IActionResult> VerifyEmail(Guid userId, string token)
         {
@@ -197,6 +205,39 @@ namespace SocialMedia.Controllers
 
             return Ok(new { message = "Email verified successfully!" });
         }
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpGet("get-user")]
+        public IActionResult GetUser()
+        {
+            var userIdString = User.FindFirst("Id")?.Value; 
+
+            if (Guid.TryParse(userIdString, out Guid userId))
+            {
+                return Ok(new { message = "Success", userId });
+            }
+
+            return Unauthorized(new { message = "Invalid or missing user ID" });
+        }
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest model)
+        {
+            var result = await _userRepository.ForgotPassword(model.Email);
+            return Ok(new { message = result });
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [HttpGet("auto-reset-password")]
+        public async Task<IActionResult> AutoResetPassword(Guid userId, string token)
+        {
+          var result=await  _userRepository.AutoResetPassword(userId, token);
+          return Ok(result);
+        }
+        
+
+
+
+
+
 
 
     }

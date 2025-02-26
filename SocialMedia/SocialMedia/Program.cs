@@ -51,6 +51,7 @@ namespace SocialMedia
             builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
                 {
                     options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
+                    options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultEmailProvider;
                 })
                 .AddEntityFrameworkStores<SocialDbContext>()
                 .AddDefaultTokenProviders();
