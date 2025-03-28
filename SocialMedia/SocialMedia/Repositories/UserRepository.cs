@@ -25,14 +25,18 @@ namespace SocialMedia.Repositories
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration; 
         private readonly IEmailService _emailService;
+        private readonly ILogingToken _logingToken;
+        private readonly IGeneratePassword _generatePassword;
 
-        public UserRepository(IEmailService emailService, SocialDbContext context, SignInManager<User> signInManager, UserManager<User> userManager, IConfiguration configuration)
+        public UserRepository(IGeneratePassword generatePassword, ILogingToken logingToken,IEmailService emailService, SocialDbContext context, SignInManager<User> signInManager, UserManager<User> userManager, IConfiguration configuration)
         {
             _context = context;
             _signInManager = signInManager;
             _userManager = userManager;
             _configuration= configuration;
             _emailService = emailService;
+            _logingToken = logingToken;
+            _generatePassword = generatePassword;
         }
 
         public async Task<string> AddUser(registerationViewModel x)
@@ -64,7 +68,7 @@ namespace SocialMedia.Repositories
                 var encodedToken = WebUtility.UrlEncode(emailToken);
                 var verificationUrl = $"http://localhost:5051/api/user/verify-email?userId={NewUser.Id}&token={encodedToken}";
                 string emailBody= _emailService.EmailBody(verificationUrl);
-                await SendEmail(NewUser.Email, $"Hello {NewUser.FirstName} {NewUser.LastName}", emailBody);
+                await _emailService.SendEmailAsync(NewUser.Email, $"Hello {NewUser.FirstName} {NewUser.LastName}", emailBody);
             }
             else
             {
@@ -72,7 +76,6 @@ namespace SocialMedia.Repositories
             }
             return ans;
         }
-
         public async Task<List<User>> GetAllUsers()
         {
             return await _context.Users.ToListAsync();
@@ -146,51 +149,11 @@ namespace SocialMedia.Repositories
             {
                 return "Email is not verified. Please check your inbox.";
             }
-            string tokenString = GenerateJwtToken(user);
+            string tokenString = _logingToken.GenerateJwtToken(user);
             user.SecurityStamp = tokenString;
             await _userManager.UpdateAsync(user);
             return tokenString;
         }
-
-        private string GenerateJwtToken(User user)
-        {
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, _configuration["AppSettings:Subject"]!),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("Id", user.Id.ToString()),
-                new Claim("Email", user.Email.ToString()),
-            };
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["AppSettings:Token"]!));
-            var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var token = new JwtSecurityToken(
-                _configuration["AppSettings:Issuer"],
-                _configuration["AppSettings:Audience"],
-                claims,
-                expires: DateTime.Now.AddDays(1),
-                signingCredentials: signIn
-            );
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-        private async Task<string> SendEmail(string to, string subject = "Hello To our project", string body = "Is this really you?")
-        {
-            if (string.IsNullOrWhiteSpace(to) ||
-                string.IsNullOrWhiteSpace(subject) ||
-                string.IsNullOrWhiteSpace(body))
-            {
-                return "Failed: All fields (To, Subject, Body) are required!";
-            }
-            try
-            {
-                await _emailService.SendEmailAsync(to, subject, body);
-                return "Email sent successfully!";
-            }
-            catch (Exception ex)
-            {
-                return $"Failed to send email. Error: {ex.Message}";
-            }
-        }
-       
         public async Task<string> ForgotPassword(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
@@ -220,8 +183,8 @@ namespace SocialMedia.Repositories
             {
                 return "Invalid or expired token.";
             }
-
             string newPassword = GenerateRandomPassword();
+            //string newPassword = _generatePassword.GenerateRandomPassword(); this should work
 
             var resetResult = await _userManager.ResetPasswordAsync(user, token, newPassword);
             if (!resetResult.Succeeded)
@@ -235,14 +198,13 @@ namespace SocialMedia.Repositories
 
             return "Password has been reset. Check your email for the new password.";
         }
-        private string GenerateRandomPassword()
+        public string GenerateRandomPassword()
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$!";
             var random = new Random();
             return new string(Enumerable.Repeat(chars, 12)
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
-
 
 
     }

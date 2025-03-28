@@ -1,4 +1,4 @@
-﻿namespace SocialMedia.Servises
+﻿namespace SocialMedia.Repositories.Interfaces
 {
     public interface IEmailService
     {

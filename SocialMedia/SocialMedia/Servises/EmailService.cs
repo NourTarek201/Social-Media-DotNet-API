@@ -4,6 +4,7 @@ using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 using SmtpClient = MailKit.Net.Smtp.SmtpClient;
+using SocialMedia.Repositories.Interfaces;
 
 namespace SocialMedia.Servises
 {
@@ -31,6 +32,24 @@ namespace SocialMedia.Servises
                 await smtp.AuthenticateAsync(emailSettings["SenderEmail"], emailSettings["SenderPassword"]);
                 await smtp.SendAsync(email);
                 await smtp.DisconnectAsync(true);
+            }
+        }
+        public async Task<string> SendEmail(string to, string subject = "Hello To our project", string body = "Is this really you?")
+        {
+            if (string.IsNullOrWhiteSpace(to) ||
+                string.IsNullOrWhiteSpace(subject) ||
+                string.IsNullOrWhiteSpace(body))
+            {
+                return "Failed: All fields (To, Subject, Body) are required!";
+            }
+            try
+            {
+                await SendEmailAsync(to, subject, body);
+                return "Email sent successfully!";
+            }
+            catch (Exception ex)
+            {
+                return $"Failed to send email. Error: {ex.Message}";
             }
         }
         public string EmailBody(string url)

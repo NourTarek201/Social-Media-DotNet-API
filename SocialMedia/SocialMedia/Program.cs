@@ -13,6 +13,7 @@ using Scalar.AspNetCore;
 using SocialMedia.Servises;
 using SocialMedia.Services;
 using SocialMedia.Models.Context;
+using SocialMedia.Servises.SocialMedia.Servises;
 
 namespace SocialMedia
 {
@@ -47,6 +48,8 @@ namespace SocialMedia
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<ICommentRepository, CommentRepository>();
             builder.Services.AddScoped<IPostRepository, PostRepository>();
+            builder.Services.AddScoped<ILogingToken, LoginToken>();
+            builder.Services.AddScoped<IGeneratePassword,GeneratePassword>();
 
             builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
                 {
