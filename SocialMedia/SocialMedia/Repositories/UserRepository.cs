@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,26 +18,34 @@ using System.Text;
 
 namespace SocialMedia.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository<T> : IUserRepository<T> where T : BaseUser
     {
-        private readonly SocialDbContext _context;
-
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration; 
         private readonly IEmailService _emailService;
         private readonly ILogingToken _logingToken;
         private readonly IGeneratePassword _generatePassword;
-
-        public UserRepository(IGeneratePassword generatePassword, ILogingToken logingToken,IEmailService emailService, SocialDbContext context, SignInManager<User> signInManager, UserManager<User> userManager, IConfiguration configuration)
+        private readonly SocialDbContext _context;
+        protected DbSet<T> dbSet;
+        public UserRepository(
+               SignInManager<User> signInManager,
+               UserManager<User> userManager,
+               IConfiguration configuration,
+               IEmailService emailService,
+               ILogingToken logingToken,
+               IGeneratePassword generatePassword,
+               SocialDbContext context
+         )
         {
-            _context = context;
             _signInManager = signInManager;
             _userManager = userManager;
-            _configuration= configuration;
+            _configuration = configuration;
             _emailService = emailService;
             _logingToken = logingToken;
             _generatePassword = generatePassword;
+            _context = context;
+            dbSet = context.Set<T>();
         }
 
         public async Task<string> AddUser(registerationViewModel x)
@@ -205,6 +214,38 @@ namespace SocialMedia.Repositories
             return new string(Enumerable.Repeat(chars, 12)
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
+
+
+
+        //_________________GENERIC-INTERFACE-IMPLEMENTATION____________________
+
+        public virtual async Task<T> add(T entity)
+        {
+            await dbSet.AddAsync(entity);
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+        public async Task<T> update(T entity)
+        {
+            dbSet.Update(entity);
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+        public async Task<T> delete(T entity)
+        {
+            await dbSet.Where(d => d.Id == entity.Id).ExecuteDeleteAsync();
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+        public async Task<IEnumerable<T>> getAll()
+        {
+            return await dbSet.ToListAsync();
+        }
+        public async Task<T> getById(Guid id)
+        {
+            return await dbSet.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
 
 
     }

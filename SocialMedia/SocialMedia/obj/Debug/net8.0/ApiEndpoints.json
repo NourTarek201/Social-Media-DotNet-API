@@ -1,5 +1,31 @@
 [
   {
+    "ContainingType": "SocialMedia.Controllers.ChatController",
+    "Method": "getAllFollowers",
+    "RelativePath": "api/Chat",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SocialMedia.Controllers.ChatController",
+    "Method": "Post",
+    "RelativePath": "api/Chat",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "SocialMedia.DTOs.MessageRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "SocialMedia.Controllers.CommentController",
     "Method": "AddComment",
     "RelativePath": "api/Comment/Add",
@@ -53,6 +79,38 @@
   },
   {
     "ContainingType": "SocialMedia.Controllers.FollowersController",
+    "Method": "AcceptRequest",
+    "RelativePath": "api/Followers/accept",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "followerID",
+        "Type": "System.Guid",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SocialMedia.Controllers.FollowersController",
+    "Method": "BlockRequest",
+    "RelativePath": "api/Followers/block",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "followerID",
+        "Type": "System.Guid",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SocialMedia.Controllers.FollowersController",
     "Method": "FollowUser",
     "RelativePath": "api/Followers/FollowUser",
     "HttpMethod": "POST",
@@ -61,6 +119,22 @@
     "Parameters": [
       {
         "Name": "followingUserId",
+        "Type": "System.Guid",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SocialMedia.Controllers.FollowersController",
+    "Method": "RejectRequest",
+    "RelativePath": "api/Followers/reject",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "followerID",
         "Type": "System.Guid",
         "IsRequired": false
       }

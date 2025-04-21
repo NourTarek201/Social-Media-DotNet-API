@@ -12,10 +12,10 @@ namespace SocialMedia.Controllers
     public class PostController : ControllerBase
     {
         IBaseRepository<Post> _postBaserpository;
-        IUserRepository _userRepository;
+        IUserRepository<User> _userRepository;
         ICommentRepository _commentRepository;
         IPostRepository _postRepository;
-        public PostController(IBaseRepository<Post> PostCRUDRepository, IUserRepository userRepository, ICommentRepository commentRepository, IPostRepository postRepository)
+        public PostController(IBaseRepository<Post> PostCRUDRepository, IUserRepository<User> userRepository, ICommentRepository commentRepository, IPostRepository postRepository)
         {
             _postBaserpository = PostCRUDRepository;
             _userRepository = userRepository;

@@ -5,7 +5,7 @@ using SocialMedia.ViewModel.Edite;
 
 namespace SocialMedia.Repositories.Interfaces
 {
-    public interface IUserRepository
+    public interface IUserRepository<T>: IBaseRepository<T>
     {
         Task<string> AddUser(registerationViewModel x);
         Task<List<User>> GetAllUsers();
@@ -19,5 +19,8 @@ namespace SocialMedia.Repositories.Interfaces
         Task<string?> Login(LoginViewModel req);
         Task<string> ForgotPassword(string email);
         Task<string> AutoResetPassword(Guid userId, string token);
+
+
+
     }
 }

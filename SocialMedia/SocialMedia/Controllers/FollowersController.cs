@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SocialMedia.Models;
+using SocialMedia.Models.Enums;
 using SocialMedia.Repositories.Interfaces;
 using SocialMedia.Services;
 using System.Security.Claims;
@@ -83,6 +84,70 @@ namespace SocialMedia.Controllers
                 return BadRequest("Invalid request.");
             }
             return Ok("UnFollow request successful.");
+        }
+
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpPost("accept")]
+        public async Task<IActionResult> AcceptRequest(Guid followerID)
+        {
+            var userIdString = User.FindFirst("Id")?.Value;
+
+            //Console.WriteLine($"Extracted User ID: {userIdString}");
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized("Please sign in first.");
+            }
+
+            if (!Guid.TryParse(userIdString, out Guid userGuid))
+            {
+                return BadRequest("Invalid user ID.");
+            }
+
+            var result = await _followerService.UpdateStatusAsync(userGuid, followerID, RequestStatus.Accepted);
+            return result != null ? Ok("Status Updated") : BadRequest("Failed to update status");
+        }
+
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpPost("block")]
+        //needed logic to block content of this user 
+        public async Task<IActionResult> BlockRequest(Guid followerID)
+        {
+            var userIdString = User.FindFirst("Id")?.Value;
+
+            //Console.WriteLine($"Extracted User ID: {userIdString}");
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized("Please sign in first.");
+            }
+
+            if (!Guid.TryParse(userIdString, out Guid userGuid))
+            {
+                return BadRequest("Invalid user ID.");
+            }
+
+            var result = await _followerService.UpdateStatusAsync(userGuid, followerID, RequestStatus.Blocked);
+            return result != null ? Ok("Status Updated") : BadRequest("Failed to update status");
+        }
+
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpPost("reject")]
+        public async Task<IActionResult> RejectRequest(Guid followerID)
+        {
+            var userIdString = User.FindFirst("Id")?.Value;
+
+            //Console.WriteLine($"Extracted User ID: {userIdString}");
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized("Please sign in first.");
+            }
+
+            if (!Guid.TryParse(userIdString, out Guid userGuid))
+            {
+                return BadRequest("Invalid user ID.");
+            }
+
+            var result = await _followerService.UpdateStatusAsync(userGuid, followerID, RequestStatus.Rejected);
+            return result != null ? Ok("Status Updated") : BadRequest("Failed to update status");
         }
     }
 }

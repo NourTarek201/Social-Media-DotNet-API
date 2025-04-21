@@ -21,14 +21,14 @@ namespace SocialMedia.Controllers
     {
       //  private readonly SocialDbContext _context;
         
-        IUserRepository _userRepository;
+        IUserRepository<User> _userRepository;
         SignInManager<User> _signInManager;
         UserManager<User> _userManager;
         ICommentRepository _commentRepository;
         IPostRepository _postRepository;
         IEmailService _emailService;
 
-        public UserController(IEmailService EemailService, IUserRepository userRepository, UserManager<User> userManager,SignInManager<User>_signInManager,ICommentRepository commentRepository,IPostRepository postRepository)
+        public UserController(IEmailService EemailService, IUserRepository<User> userRepository, UserManager<User> userManager,SignInManager<User>_signInManager,ICommentRepository commentRepository,IPostRepository postRepository)
         {
             _userRepository = userRepository;
             _userManager = userManager;
@@ -80,23 +80,23 @@ namespace SocialMedia.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [Authorize(AuthenticationSchemes = "Bearer")]
+        //[Authorize(AuthenticationSchemes = "Bearer")]
         [HttpGet("All")]
         public async Task<IActionResult> getalluser()
         {
-            try
-            {
+            //try
+            //{
                 var x = await _userRepository.GetAllUsers();
                 return Ok(x);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Unauthorized("You are not authorized to access this resource.");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            //}
+            //catch (UnauthorizedAccessException)
+            //{
+                //return Unauthorized("You are not authorized to access this resource.");
+            //}
+            //catch (Exception ex)
+            //{
+            //    return BadRequest(ex.Message);
+            //}
         }
 
         [HttpGet("byId")]

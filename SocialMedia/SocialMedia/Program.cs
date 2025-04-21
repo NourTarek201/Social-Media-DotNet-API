@@ -50,6 +50,9 @@ namespace SocialMedia
             builder.Services.AddScoped<IPostRepository, PostRepository>();
             builder.Services.AddScoped<ILogingToken, LoginToken>();
             builder.Services.AddScoped<IGeneratePassword,GeneratePassword>();
+            builder.Services.AddScoped<FollowerRepository>();
+            //builder.Services.AddScoped<UserRepository>(); //delete line when user be generic
+
 
             builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
                 {
@@ -66,9 +69,14 @@ namespace SocialMedia
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            //builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseUserRepository<>));
             builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            builder.Services.AddScoped(typeof(IUserRepository<>), typeof(UserRepository<>));
+
+            //builder.Services.AddScoped<IUserRepository<>, UserRepository<>(); //commented until fixing generic of user
+
             builder.Services.AddScoped<FollowerService>();
+            builder.Services.AddScoped<ChatService>();
 
             var app = builder.Build();
 

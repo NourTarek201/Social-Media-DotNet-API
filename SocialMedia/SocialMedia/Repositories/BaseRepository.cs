@@ -7,8 +7,8 @@ namespace SocialMedia.Repositories
 {
     public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
     {
-        private readonly SocialDbContext _context;
-        private DbSet<T> dbSet;
+        protected readonly SocialDbContext _context;
+        protected DbSet<T> dbSet;
         public BaseRepository(SocialDbContext context)
         {
             _context = context;

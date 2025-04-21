@@ -59,6 +59,16 @@ namespace SocialMedia.Models.Context
                 .HasForeignKey(p => p.PostId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+
+            //uncomment when you apply group chatroom feature
+            //created chatrooms 1-M User to Chatrooms
+            //modelBuilder.Entity<Chatroom>()
+            //.HasOne(c => c.Creator)
+            //.WithMany(u => u.CreatedChatrooms)
+            //.HasForeignKey(c => c.CreatorId)
+            //.OnDelete(DeleteBehavior.Restrict);
+
+
         }
 
         public virtual DbSet<User> Users { get; set; }

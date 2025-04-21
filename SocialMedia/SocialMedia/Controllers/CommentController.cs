@@ -14,8 +14,8 @@ namespace SocialMedia.Controllers
     {
         IBaseRepository<Comment> _commentBaseRepository;
         IBaseRepository<Post> _postRepository;
-        IUserRepository _userRepository;
-        public CommentController(IBaseRepository<Comment> commentRepository, IBaseRepository<Post> postRepository, IUserRepository userRepository)
+        IUserRepository<User> _userRepository;
+        public CommentController(IBaseRepository<Comment> commentRepository, IBaseRepository<Post> postRepository, IUserRepository<User> userRepository)
         {
             _commentBaseRepository = commentRepository;
             _postRepository = postRepository;
