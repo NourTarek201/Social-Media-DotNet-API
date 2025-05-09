@@ -1,6 +1,6 @@
 ﻿namespace SocialMedia.ViewModel.Edite
 {
-    public class EditeUserViewModel
+    public class EditeUserDTO
     {
         public Guid Id { get; set; }
         public string firstName { get; set; }

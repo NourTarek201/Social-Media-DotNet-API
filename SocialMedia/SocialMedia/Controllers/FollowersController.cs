@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SocialMedia.Models;
 using SocialMedia.Models.Enums;
+using SocialMedia.Repositories;
 using SocialMedia.Repositories.Interfaces;
 using SocialMedia.Services;
 using System.Security.Claims;
@@ -16,25 +17,22 @@ namespace SocialMedia.Controllers
     public class FollowersController : ControllerBase
     {
         private FollowerService _followerService;
+        private readonly FollowerRepository _followerRepository;
         IBaseRepository<UserFollower> followerRepo;
+        
         UserManager<User> _userManager;
         public FollowersController(IBaseRepository<UserFollower> followerRepo, 
             UserManager<User> _userManager,
-             FollowerService _followerService)
+             FollowerService _followerService,
+             FollowerRepository followerRepository)
+            
         {
             this.followerRepo = followerRepo;
             this._userManager = _userManager;
             this._followerService = _followerService;
+            this._followerRepository = followerRepository;
         }
-        // GET: api/<FollowersController>
-        [HttpGet]
-        public async Task<IActionResult> getAllFollowers()
-        {
-            var all = await followerRepo.getAll();
-            return Ok(all);
-        }
-
-
+        
         [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpPost("FollowUser")]
         public async Task<IActionResult> FollowUser(Guid followingUserId)
@@ -52,14 +50,57 @@ namespace SocialMedia.Controllers
                 return BadRequest("Invalid user ID.");
             }
             var follow = await _followerService.FollowUser(followingUserId, userGuid);
+
+            return follow;
             
-            if(follow == null)
-            {
-                return BadRequest("Invalid request.");
-            }
-            return Ok("Follow request successful.");
         }
 
+        [HttpGet("UserFollowers")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> getFollowers()
+        {
+            var userIdString = User.FindFirst("Id")?.Value;
+
+            
+           
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized("Please sign in first.");
+            }
+
+            if (!Guid.TryParse(userIdString, out Guid userId))
+            {
+                return BadRequest("Invalid user ID.");
+            }
+            var followers = await _followerRepository.GetFollowes(userId);
+
+            if (followers == null)
+            {
+                return NotFound("No followers found.");
+            }
+            return Ok(followers);
+        }
+
+        [HttpGet("UserFollowing")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> getFollowing()
+        {
+            var userIdString = User.FindFirst("Id")?.Value;
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized("Please sign in first.");
+            }
+            if (!Guid.TryParse(userIdString, out Guid userId))
+            {
+                return BadRequest("Invalid user ID.");
+            }
+            var following = await _followerRepository.GetFollowings(userId);
+            if (following == null)
+            {
+                return NotFound("No following found.");
+            }
+            return Ok(following);
+        }
         [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpPost("unFollowUser")]
         public async Task<IActionResult> unFollowUser(Guid followingUserId)
@@ -79,11 +120,7 @@ namespace SocialMedia.Controllers
 
             var unfollow = await _followerService.unFollowUser(followingUserId, userGuid);
 
-            if (unfollow == null)
-            {
-                return BadRequest("Invalid request.");
-            }
-            return Ok("UnFollow request successful.");
+            return unfollow;
         }
 
         [Authorize(AuthenticationSchemes = "Bearer")]
@@ -91,6 +128,7 @@ namespace SocialMedia.Controllers
         public async Task<IActionResult> AcceptRequest(Guid followerID)
         {
             var userIdString = User.FindFirst("Id")?.Value;
+
 
             //Console.WriteLine($"Extracted User ID: {userIdString}");
             if (string.IsNullOrEmpty(userIdString))
@@ -109,7 +147,6 @@ namespace SocialMedia.Controllers
 
         [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpPost("block")]
-        //needed logic to block content of this user 
         public async Task<IActionResult> BlockRequest(Guid followerID)
         {
             var userIdString = User.FindFirst("Id")?.Value;

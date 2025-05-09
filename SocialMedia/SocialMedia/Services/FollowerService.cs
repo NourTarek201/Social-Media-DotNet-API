@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SocialMedia.Models;
 using SocialMedia.Models.Enums;
 using SocialMedia.Repositories;
 using SocialMedia.Repositories.Interfaces;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 
 namespace SocialMedia.Services
@@ -23,14 +25,24 @@ namespace SocialMedia.Services
             _userRepository = userRepository;
         }
 
-        public async Task<UserFollower?> FollowUser(Guid userId, Guid followerId)
+        public async Task<IActionResult> FollowUser(Guid userId, Guid followerId)
         {
             var follower = await _userRepository.GetUserById(followerId);
             var user = await _userRepository.GetUserById(userId);
 
             if (user == null || follower == null)
             {
-                return null;
+                return new BadRequestObjectResult("User or follower not found.");
+            }
+
+            var existingRequest = await _followerRepository.GetUserFollowerByUsers(userId, followerId);
+            if (existingRequest != null)
+            {
+                return new BadRequestObjectResult("A follow request already exists between these users.");
+            }
+            if (userId == followerId)
+            {
+                return new BadRequestObjectResult("Cannot follow yourself");
             }
 
             var newFollower = new UserFollower
@@ -41,43 +53,47 @@ namespace SocialMedia.Services
                 Follower = follower,
                 CreatedAt = DateTime.UtcNow,
             };
-            //follower.Followings.Add(newFollower);
-            //user.Followers.Add(newFollower);
-            //await _userRepository.update(user);
-            var added = await _followerRepository.add(newFollower);
-            Console.Write(user.Followers.First().Id + "btatesssssssss");
 
-            return added;
+            var result = await _followerRepository.add(newFollower);
+            if (result == null)
+            {
+                return new StatusCodeResult(500);
+            }
+
+            return new OkObjectResult("Follow request sent successfully.");
         }
 
-        public async Task<UserFollower?> unFollowUser(Guid userId, Guid followerId)
+        public async Task<IActionResult> unFollowUser(Guid userId, Guid followerId)
         {
             var follower = await _userRepository.GetUserById(followerId);
             var user = await _userRepository.GetUserById(userId);
-
+            if (userId == followerId)
+            {
+                return new BadRequestObjectResult("User Cant follow him self.");
+            }
             if (user == null || follower == null)
             {
-                return null;
+                return new BadRequestObjectResult("User or follower not found.");
             }
 
-            foreach (UserFollower u in follower.Followings)
-            {
-                if (u.UserId == userId)
-                {
-                    return await _followerRepository.delete(u);
-                }
-            }
+            var userFollower = follower.Followings.FirstOrDefault(u => u.UserId == userId);
+            if (userFollower == null) return new StatusCodeResult(500);
+                
+            
+            
+           var result= await _followerRepository.delete(userFollower);
+            if (result ==null)  return new StatusCodeResult(500);
 
-            return null;
 
+            return new OkObjectResult("user unfollowed successfully.");
         }
+
+       
 
         public async Task<UserFollower> UpdateStatusAsync(Guid userId, Guid followerId, RequestStatus status)
         {
             User u = await _userRepository.GetUserById(userId);
-            Console.WriteLine(userId + "\n\n\n\nbsssssssssssssssss" + followerId);
             UserFollower userFollower = await _followerRepository.GetUserFollowerByUsers(userId, followerId);
-
             if (userFollower == null)
             {
                 throw new Exception("follow request not sent");

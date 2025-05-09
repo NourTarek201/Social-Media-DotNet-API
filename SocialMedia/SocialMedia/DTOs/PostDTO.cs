@@ -2,7 +2,7 @@
 
 namespace SocialMedia.ViewModel
 {
-    public class PostViewModel
+    public class PostDTO
     {
         public Guid UserId { get; set; }
         public string MediaLink { get; set; }

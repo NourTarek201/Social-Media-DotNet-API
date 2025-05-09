@@ -23,7 +23,7 @@ namespace SocialMedia.Controllers
             _postRepository = postRepository;
         }
         [HttpPost("Add")]
-        public async Task<IActionResult> AddPost([FromBody] PostViewModel post)
+        public async Task<IActionResult> AddPost([FromBody] PostDTO post)
         {
             try
             {
@@ -99,7 +99,7 @@ namespace SocialMedia.Controllers
             }
         }
         [HttpPut("Edit")]
-        public async Task<IActionResult> EditPost([FromBody] EditePostViewModel post)
+        public async Task<IActionResult> EditPost([FromBody] EditePostDTO post)
         {
             try
             {

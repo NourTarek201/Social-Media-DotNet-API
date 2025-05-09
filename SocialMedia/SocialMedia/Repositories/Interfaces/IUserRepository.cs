@@ -7,7 +7,7 @@ namespace SocialMedia.Repositories.Interfaces
 {
     public interface IUserRepository<T>: IBaseRepository<T>
     {
-        Task<string> AddUser(registerationViewModel x);
+        Task<string> AddUser(registerationDTO x);
         Task<List<User>> GetAllUsers();
         Task<User> GetUserById(Guid id);
         Task<User> GetUserByUserName(string name);
@@ -15,8 +15,8 @@ namespace SocialMedia.Repositories.Interfaces
         Task DeleteUser(string Username);
         Task<User> GetByEmailandPassword(string email, string password);
         Task Changepass(string email, string oldpass, string newpass);
-        Task<string> EditeUser(EditeUserViewModel model);
-        Task<string?> Login(LoginViewModel req);
+        Task<string> EditeUser(EditeUserDTO model);
+        Task<string?> Login(LoginDTO req);
         Task<string> ForgotPassword(string email);
         Task<string> AutoResetPassword(Guid userId, string token);
 

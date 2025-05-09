@@ -1,6 +1,6 @@
 ﻿namespace SocialMedia.ViewModel
 {
-    public class UserviewModel
+    public class UserDTO
     {
         public string firstName { get; set; }
         public string lastName { get; set; }

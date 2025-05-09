@@ -23,7 +23,7 @@ namespace SocialMedia.Servises
         }
 
         //single chatroom only !
-        public async Task<Chatroom> CreateChatroom(Guid creatorId, List<User> users, String msg)
+        public async Task<Chatroom> CreateChatroom(Guid creatorId, List<User> users, string msg)
         {
             User creator = await _userRepository.GetUserById(creatorId);
             if (creator == null)

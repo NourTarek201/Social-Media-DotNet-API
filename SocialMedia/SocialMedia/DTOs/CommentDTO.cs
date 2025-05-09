@@ -1,6 +1,6 @@
 ﻿namespace SocialMedia.ViewModel
 {
-    public class CommentViewModel
+    public class CommentDTO
     {
         public string Content { get; set; }
         public Guid UserId { get; set; }

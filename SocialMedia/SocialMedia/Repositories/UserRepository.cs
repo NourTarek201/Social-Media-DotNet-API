@@ -48,7 +48,7 @@ namespace SocialMedia.Repositories
             dbSet = context.Set<T>();
         }
 
-        public async Task<string> AddUser(registerationViewModel x)
+        public async Task<string> AddUser(registerationDTO x)
         {
             if (_context.Users.Any(u => u.Email == x.Email))
             {
@@ -69,7 +69,7 @@ namespace SocialMedia.Repositories
             };
 
             var results = await _userManager.CreateAsync(NewUser, x.Password);
-            string ans = "User created successfully";
+            string ans = "User created successfully confirm your Email (chick spam)";
 
             if (results.Succeeded)
             {
@@ -123,7 +123,7 @@ namespace SocialMedia.Repositories
             var user = await GetByEmailandPassword(email, oldpass);
             await _userManager.ChangePasswordAsync(user, oldpass, newpass);
         }
-        public async Task <string> EditeUser(EditeUserViewModel model)
+        public async Task <string> EditeUser(EditeUserDTO model)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == model.Id);
             if (user == null)
@@ -142,7 +142,7 @@ namespace SocialMedia.Repositories
             return "User updated successfully";
 
         }
-        public async Task<string?> Login(LoginViewModel req)
+        public async Task<string?> Login(LoginDTO req)
         {
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == req.Email);
             if (user is null)

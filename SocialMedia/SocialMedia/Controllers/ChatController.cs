@@ -2,11 +2,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using SocialMedia.DTOs;
 using SocialMedia.Models;
 using SocialMedia.Repositories.Interfaces;
 using SocialMedia.Services;
 using SocialMedia.Servises;
+using SocialMedia.ViewModel;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -34,13 +34,14 @@ namespace SocialMedia.Controllers
             var all = await _chatRepository.getAll();
             return Ok(all);
         }
+       
 
 
         // POST api/<ChatController>
         [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpPost]
         //single chat controller
-        public async Task<IActionResult> Post([FromBody] MessageRequest request)
+        public async Task<IActionResult> Post([FromBody] MessageRequestDTO request)
         {
             var userIdString = User.FindFirst("Id")?.Value;
             if (string.IsNullOrEmpty(userIdString))

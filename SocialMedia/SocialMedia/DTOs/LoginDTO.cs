@@ -2,7 +2,7 @@
 
 namespace SocialMedia.ViewModel
 {
-    public class LoginViewModel
+    public class LoginDTO
     {
         [Required]
         public string Email { get; set; }

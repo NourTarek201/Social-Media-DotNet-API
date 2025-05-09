@@ -56,35 +56,71 @@ namespace SocialMedia.Servises
         {
             string emailBody = $@"
 <!DOCTYPE html>
-<html>
+<html lang='en'>
 <head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Verify Your Email</title>
     <style>
-        body {{ font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }}
-        .container {{ max-width: 600px; margin: 20px auto; background: #ffffff; padding: 20px; border-radius: 10px; 
-                      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); text-align: center; }}
-        .header {{ font-size: 24px; font-weight: bold; color: #333; margin-bottom: 10px; }}
-        .content {{ font-size: 16px; color: #555; margin-bottom: 20px; }}
-        .btn {{ display: inline-block; padding: 12px 20px; font-size: 18px; color: #fff; background-color: #28a745; 
-                text-decoration: none; border-radius: 5px; }}
-        .footer {{ margin-top: 20px; font-size: 14px; color: #777; }}
+        body {{
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }}
+        .container {{
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }}
+        .header {{
+            font-size: 24px;
+            font-weight: bold;
+            color: #333333;
+            margin-bottom: 20px;
+        }}
+        .content {{
+            font-size: 16px;
+            color: #555555;
+            margin-bottom: 30px;
+        }}
+        .btn {{
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 16px;
+            color: #ffffff;
+            background-color: #28a745;
+            text-decoration: none;
+            border-radius: 5px;
+        }}
+        .footer {{
+            margin-top: 30px;
+            font-size: 12px;
+            color: #888888;
+        }}
     </style>
 </head>
 <body>
     <div class='container'>
-        <div class='header'>Welcome to Our Project!</div>
+        <div class='header'>Verify Your Email Address</div>
         <div class='content'>
-            Thank you for signing up. Please click the button below to verify your email address.
+            Thank you for signing up! To complete your registration, please click the button below to verify your email address.
         </div>
         <a href='{url}' class='btn'>Verify Email</a>
         <div class='footer'>
-            If you did not create an account, please ignore this email.
+            If you did not request this, you can safely ignore this email.<br />
+            &copy; {DateTime.UtcNow.Year} Social. All rights reserved.
         </div>
     </div>
 </body>
 </html>";
             return emailBody;
-
         }
+
         public string ForgotPasswordBody(string url)
         {
             string emailBody = $@"

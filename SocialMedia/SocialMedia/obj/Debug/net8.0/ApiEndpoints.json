@@ -19,7 +19,7 @@
     "Parameters": [
       {
         "Name": "request",
-        "Type": "SocialMedia.DTOs.MessageRequest",
+        "Type": "SocialMedia.ViewModel.MessageRequestDTO",
         "IsRequired": true
       }
     ],
@@ -35,7 +35,7 @@
     "Parameters": [
       {
         "Name": "comment",
-        "Type": "SocialMedia.ViewModel.CommentViewModel",
+        "Type": "SocialMedia.ViewModel.CommentDTO",
         "IsRequired": true
       }
     ],
@@ -51,7 +51,7 @@
     "Parameters": [
       {
         "Name": "Editcomment",
-        "Type": "SocialMedia.ViewModel.Edite.EditeCommentViewModel",
+        "Type": "SocialMedia.ViewModel.Edite.EditeCommentDTO",
         "IsRequired": true
       }
     ],
@@ -61,16 +61,6 @@
     "ContainingType": "SocialMedia.Controllers.CommentController",
     "Method": "getall",
     "RelativePath": "api/Comment/GetAll",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "SocialMedia.Controllers.FollowersController",
-    "Method": "getAllFollowers",
-    "RelativePath": "api/Followers",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -158,6 +148,26 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "SocialMedia.Controllers.FollowersController",
+    "Method": "getFollowers",
+    "RelativePath": "api/Followers/UserFollowers",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SocialMedia.Controllers.FollowersController",
+    "Method": "getFollowing",
+    "RelativePath": "api/Followers/UserFollowing",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "SocialMedia.Controllers.PostController",
     "Method": "DeletePost",
     "RelativePath": "api/Post",
@@ -183,7 +193,7 @@
     "Parameters": [
       {
         "Name": "post",
-        "Type": "SocialMedia.ViewModel.PostViewModel",
+        "Type": "SocialMedia.ViewModel.PostDTO",
         "IsRequired": true
       }
     ],
@@ -199,7 +209,7 @@
     "Parameters": [
       {
         "Name": "post",
-        "Type": "SocialMedia.ViewModel.Edite.EditePostViewModel",
+        "Type": "SocialMedia.ViewModel.Edite.EditePostDTO",
         "IsRequired": true
       }
     ],
@@ -382,7 +392,7 @@
     "Parameters": [
       {
         "Name": "model",
-        "Type": "SocialMedia.ViewModel.Edite.EditeUserViewModel",
+        "Type": "SocialMedia.ViewModel.Edite.EditeUserDTO",
         "IsRequired": true
       }
     ],
@@ -398,7 +408,7 @@
     "Parameters": [
       {
         "Name": "model",
-        "Type": "SocialMedia.ViewModel.ForgotPasswordRequest",
+        "Type": "SocialMedia.ViewModel.ForgotPasswordRequestDTO",
         "IsRequired": true
       }
     ],
@@ -424,7 +434,7 @@
     "Parameters": [
       {
         "Name": "req",
-        "Type": "SocialMedia.ViewModel.LoginViewModel",
+        "Type": "SocialMedia.ViewModel.LoginDTO",
         "IsRequired": true
       }
     ],
@@ -440,7 +450,7 @@
     "Parameters": [
       {
         "Name": "user",
-        "Type": "SocialMedia.ViewModel.registerationViewModel",
+        "Type": "SocialMedia.ViewModel.registerationDTO",
         "IsRequired": true
       }
     ],

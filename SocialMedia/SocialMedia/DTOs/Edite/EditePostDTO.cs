@@ -2,7 +2,7 @@
 
 namespace SocialMedia.ViewModel.Edite
 {
-    public class EditePostViewModel
+    public class EditePostDTO
     {
         public Guid Id { get; set; }
         public string? Description { get; set; }

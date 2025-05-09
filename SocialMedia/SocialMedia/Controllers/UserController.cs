@@ -39,7 +39,7 @@ namespace SocialMedia.Controllers
 
 
         [HttpPost("Registeration")]
-        public async Task<IActionResult> AddUser([FromBody] registerationViewModel user)
+        public async Task<IActionResult> AddUser([FromBody] registerationDTO user)
         {
             try
             {
@@ -52,7 +52,7 @@ namespace SocialMedia.Controllers
             }
         }
         [HttpPost("Login")]
-        public async Task<IActionResult> Login([FromBody] LoginViewModel req)
+        public async Task<IActionResult> Login([FromBody] LoginDTO req)
         {
             try
             {
@@ -173,7 +173,7 @@ namespace SocialMedia.Controllers
         }
         
         [HttpPut("EditeUser")]
-        public async Task<IActionResult> EditeUser([FromBody] EditeUserViewModel model)
+        public async Task<IActionResult> EditeUser([FromBody] EditeUserDTO model)
         {
             try
             {
@@ -218,7 +218,7 @@ namespace SocialMedia.Controllers
             return Unauthorized(new { message = "Invalid or missing user ID" });
         }
         [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest model)
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDTO model)
         {
             var result = await _userRepository.ForgotPassword(model.Email);
             return Ok(new { message = result });

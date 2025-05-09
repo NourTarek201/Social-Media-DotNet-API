@@ -22,7 +22,7 @@ namespace SocialMedia.Controllers
             _userRepository = userRepository;
         }
         [HttpPost("Add")]
-        public async Task<IActionResult> AddComment([FromBody] CommentViewModel comment)
+        public async Task<IActionResult> AddComment([FromBody] CommentDTO comment)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace SocialMedia.Controllers
             return Ok(com);
         }
         [HttpPut("Edit")]
-        public async Task<IActionResult>Edite([FromBody]EditeCommentViewModel Editcomment)
+        public async Task<IActionResult>Edite([FromBody]EditeCommentDTO Editcomment)
         {
             try
             {
